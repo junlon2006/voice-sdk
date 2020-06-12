@@ -29,6 +29,14 @@
 extern "C" {
 #endif
 
+enum {
+    FAIL = -1,
+    OK,
+    OUT_OF_MEMORY,
+    INVALID_IN_PARAM,
+    CREATE_TASK_FAIL,
+};
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
