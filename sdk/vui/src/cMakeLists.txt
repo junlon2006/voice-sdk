@@ -4,4 +4,4 @@ add_library(VUI SHARED
 target_include_directories(VUI PUBLIC
 	"../inc")
 
-target_link_libraries(VUI HAL)
+target_link_libraries(VUI HAL ASR AUDIOIN AEC)

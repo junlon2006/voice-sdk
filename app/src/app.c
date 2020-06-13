@@ -1,4 +1,3 @@
-
 /**************************************************************************
  * Copyright (C) 2020-2020  Junlon2006
  *
@@ -23,49 +22,20 @@
  *
  **************************************************************************/
 #include "app.h"
-#include "log.h"
-#include "ringbuf.h"
-#include "porting.h"
-#include <stdio.h>
+#include "pub.h"
+#include "vui.h"
 
 #define TAG "main"
 
-static void* __read_task(void *args) {
-    RingBufferHandle ringbuf = (RingBufferHandle)args;
-    int data_size;
-    char buf[1024];
-    while (1) {
-        data_size = RingBufferGetDataSize(ringbuf);
-        if (data_size > 0) {
-            RingBufferRead(buf, data_size, ringbuf);
-            LOGT(TAG, "read data[%d]", data_size);
-        } else {
-            uni_sleep(10);
-        }
-    }
-    return NULL;
-}
-
-static void* __write_task(void *args) {
-    RingBufferHandle ringbuf = (RingBufferHandle)args;
-    int free_size;
-    char buf[64];
-    while (1) {
-        free_size = RingBufferGetFreeSize(ringbuf);
-        if (free_size >= sizeof(buf)) {
-            RingBufferWrite(ringbuf, buf, sizeof(buf));
-        } else {
-            uni_sleep(1000);
-        }
-    }
-    return NULL;
-}
-
 int main() {
-    RingBufferHandle ringbuf = RingBufferCreate(1024);
-    uni_thread_new("test", __read_task, ringbuf, 1024 * 512);
-    uni_thread_new("test", __write_task, ringbuf, 1024 * 512);
-    LOGT(TAG, "main");
-    while (1) uni_sleep(10000);
+    LOGT(TAG, "vui create");
+    VuiHandle vui = VuiCeate();
+
+    LOGT(TAG, "vui destroy");
+    VuiDestroy(vui);
+
+    uni_sleep(100);
+    LOGT(TAG, "exit");
+
     return 0;
 }

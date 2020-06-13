@@ -26,21 +26,38 @@
 
 #define TAG "aec"
 
+typedef struct {
+    int param;
+} Aec;
+
 AecHandle AecCreate() {
-    LOGD(TAG, "aec create");
-    return NULL;
+    Aec *aec = (Aec *)malloc(sizeof(Aec));
+    if (NULL_PTR_CHECK(aec)) {
+        LOGE(TAG, OUT_MEM_STRING);
+        return NULL;
+    }
+
+    MZERO(aec);
+
+    LOGT(TAG, "aec create success");
+    return aec;
 }
 
 void AecDestroy(AecHandle hndl) {
-    LOGD(TAG, "aec destroy");
+    if (NULL_PTR_CHECK(hndl)) {
+        return;
+    }
+
+    free(hndl);
+    LOGT(TAG, "aec destroy success");
 }
 
 int AecStart(AecHandle hndl) {
-    LOGD(TAG, "aec start");
+    LOGT(TAG, "aec start");
     return 0;
 }
 
 int AecStop(AecHandle hndl) {
-    LOGD(TAG, "aec stop");
+    LOGT(TAG, "aec stop");
     return 0;
 }

@@ -26,21 +26,38 @@
 
 #define TAG "rasr"
 
+typedef struct {
+    int param;
+} Rasr;
+
 RasrHandle RasrCreate() {
-    LOGD(TAG, "rasr create");
-    return NULL;
+    Rasr *rasr = (Rasr *)malloc(sizeof(Rasr));
+    if (NULL_PTR_CHECK(rasr)) {
+        LOGE(TAG, OUT_MEM_STRING);
+        return NULL;
+    }
+
+    MZERO(rasr);
+
+    LOGT(TAG, "rasr create success");
+    return rasr;
 }
 
 void RasrDestroy(RasrHandle hndl) {
-    LOGD(TAG, "rasr destroy");
+    if (NULL_PTR_CHECK(hndl)) {
+        return;
+    }
+
+    free(hndl);
+    LOGT(TAG, "rasr destroy success");
 }
 
 int RasrStart(RasrHandle hndl) {
-    LOGD(TAG, "rasr start");
+    LOGT(TAG, "rasr start");
     return 0;
 }
 
 int RasrStop(RasrHandle hndl) {
-    LOGD(TAG, "rasr stop");
+    LOGT(TAG, "rasr stop");
     return 0;
 }

@@ -26,21 +26,38 @@
 
 #define TAG "lasr"
 
+typedef struct {
+    int param;
+} Lasr;
+
 LasrHandle LasrCreate() {
-    LOGD(TAG, "lasr create");
-    return NULL;
+    Lasr *lasr = (Lasr *)malloc(sizeof(Lasr));
+    if (NULL_PTR_CHECK(lasr)) {
+        LOGE(TAG, OUT_MEM_STRING);
+        return NULL;
+    }
+
+    MZERO(lasr);
+
+    LOGT(TAG, "lasr create success");
+    return lasr;
 }
 
 void LasrDestroy(LasrHandle hndl) {
-    LOGD(TAG, "lasr destroy");
+    if (NULL_PTR_CHECK(hndl)) {
+        return;
+    }
+
+    free(hndl);
+    LOGT(TAG, "lasr destroy success");
 }
 
 int LasrStart(LasrHandle hndl, int mode) {
-    LOGD(TAG, "lasr start");
+    LOGT(TAG, "lasr start");
     return 0;
 }
 
 int LasrStop(LasrHandle hndl) {
-    LOGD(TAG, "lasr stop");
+    LOGT(TAG, "lasr stop");
     return 0;
 }

@@ -26,21 +26,38 @@
 
 #define TAG "audioin"
 
+typedef struct {
+    int param;
+} AuidoIn;
+
 AudioInHandle AudioInCreate(void) {
-    LOGD(TAG, "audioIn create");
-    return NULL;
+    AuidoIn *audioin = (AuidoIn *)malloc(sizeof(AuidoIn));
+    if (NULL_PTR_CHECK(audioin)) {
+        LOGE(TAG, OUT_MEM_STRING);
+        return NULL;
+    }
+
+    MZERO(audioin);
+
+    LOGT(TAG, "audioIn create success");
+    return audioin;
 }
 
 void AudioInDestroy(AudioInHandle hndl) {
+    if (NULL_PTR_CHECK(hndl)) {
+        return;
+    }
+
+    free(hndl);
     LOGD(TAG, "audioIn destroy");
 }
 
 int AudioInStart(AudioInHandle hndl) {
-    LOGD(TAG, "audioIn start");
+    LOGT(TAG, "audioIn start");
     return 0;
 }
 
 int AudioInStop(AudioInHandle hndl) {
-    LOGD(TAG, "audioIn stop");
+    LOGT(TAG, "audioIn stop");
     return 0;
 }
