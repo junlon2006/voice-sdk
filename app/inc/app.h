@@ -17,13 +17,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  **************************************************************************
  *
- * Description : vui.h
+ * Description : app.h
  * Author      : junlon2006@163.com
  * Date        : 2020.06.11
  *
  **************************************************************************/
-#ifndef VOICE_SDK_SDK_VUI_INC_VUI_H_
-#define VOICE_SDK_SDK_VUI_INC_VUI_H_
+#ifndef VOICE_SDK_APP_INC_APP_H_
+#define VOICE_SDK_APP_INC_APP_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,4 +34,4 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-#endif /* VOICE_SDK_SDK_VUI_INC_VUI_H_ */
+#endif /* VOICE_SDK_APP_INC_APP_H_ */

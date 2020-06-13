@@ -1,6 +1,5 @@
-
 /**************************************************************************
- * Copyright (C) 2020-2020  Junlon2006
+ * Copyright (C) 2018-2019  Junlon2006
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,21 +16,30 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  **************************************************************************
  *
- * Description : vui.h
+ * Description : ringbuf.h
  * Author      : junlon2006@163.com
- * Date        : 2020.06.11
+ * Date        : 2019.03.17
  *
  **************************************************************************/
-#ifndef VOICE_SDK_SDK_VUI_INC_VUI_H_
-#define VOICE_SDK_SDK_VUI_INC_VUI_H_
+#ifndef RINGBUF_INC_UNI_DATABUF_H_
+#define RINGBUF_INC_UNI_DATABUF_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+typedef void* RingBufferHandle;
 
+RingBufferHandle RingBufferCreate(int size);
+int RingBufferDestroy(RingBufferHandle handle);
+int RingBufferPeek(char *dst, int readlen, RingBufferHandle handle);
+int RingBufferClear(RingBufferHandle handle);
+int RingBufferGetFreeSize(RingBufferHandle handle);
+int RingBufferGetDataSize(RingBufferHandle handle);
+int RingBufferWrite(RingBufferHandle handle, char *src, int writelen);
+int RingBufferRead(char *dst, int readlen, RingBufferHandle handle);
 
 #ifdef __cplusplus
 }
-#endif /* __cplusplus */
-#endif /* VOICE_SDK_SDK_VUI_INC_VUI_H_ */
+#endif
+#endif

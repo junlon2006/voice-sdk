@@ -1,0 +1,5 @@
+add_library(VUI SHARED
+    vui.c)
+
+target_include_directories(VUI PUBLIC
+	"../inc")
