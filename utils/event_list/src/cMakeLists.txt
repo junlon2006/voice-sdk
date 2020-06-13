@@ -1,0 +1,7 @@
+add_library(EVENT_LIST SHARED
+    event_list.c)
+
+target_include_directories(EVENT_LIST PUBLIC
+	"../inc")
+
+target_link_libraries(EVENT_LIST LIST)
