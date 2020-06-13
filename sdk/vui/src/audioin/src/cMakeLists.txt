@@ -1,0 +1,7 @@
+add_library(AUDIOIN SHARED
+    audioin.c)
+
+target_include_directories(AUDIOIN PUBLIC
+	"../inc")
+
+target_link_libraries(AUDIOIN HAL)

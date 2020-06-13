@@ -1,5 +1,5 @@
 /**************************************************************************
- * Copyright (C) 2020-2020  Junlon2006
+ * Copyright (C) 2018-2019 Junlon2006
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,21 +16,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  **************************************************************************
  *
- * Description : app.h
+ * Description : list_head.c
  * Author      : junlon2006@163.com
- * Date        : 2020.06.11
+ * Date        : 2019.03.23
  *
  **************************************************************************/
-#ifndef VOICE_SDK_APP_INC_APP_H_
-#define VOICE_SDK_APP_INC_APP_H_
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-#endif /* VOICE_SDK_APP_INC_APP_H_ */
+#include "list_head.h"

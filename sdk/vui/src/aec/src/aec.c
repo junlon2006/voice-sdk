@@ -16,65 +16,48 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  **************************************************************************
  *
- * Description : vui.h
+ * Description : aec.c
  * Author      : junlon2006@163.com
- * Date        : 2020.06.11
+ * Date        : 2020.06.13
  *
  **************************************************************************/
-#ifndef VOICE_SDK_SDK_VUI_INC_VUI_H_
-#define VOICE_SDK_SDK_VUI_INC_VUI_H_
+#include "aec.h"
+#include "pub.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#define TAG "aec"
 
-typedef enum {
-    UNI_AWAKEN_MODE = 0,
-    UNI_LASR_ONLY_MODE,
-    UNI_RASR_ONLY_MODE,
-    UNI_LASR_RASR_MODE,
-} VuiMode;
+typedef struct {
+    int param;
+} Aec;
 
-typedef void* VuiHandle;
+AecHandle AecCreate() {
+    Aec *aec = (Aec *)malloc(sizeof(Aec));
+    if (NULL_PTR_CHECK(aec)) {
+        LOGE(TAG, OUT_MEM_STRING);
+        return NULL;
+    }
 
-/**
- * Create vui handle.
- *
- * @param[in]  void.
- *
- * @return  NULL: fail, otherwise: vui handle.
- */
-VuiHandle VuiCeate(void);
+    MZERO(aec);
 
-/**
- * Destrpy vui handle.
- *
- * @param[in]  hndl  the vui handle
- *
- * @return  none.
- */
-void VuiDestroy(VuiHandle hndl);
-
-/**
- * vui start.
- *
- * @param[in]  hndl  the vui handle
- * @param[in]  mode  the vui mode
- *
- * @return  0: success, otherwise: fail.
- */
-int VuiStart(VuiHandle hndl, VuiMode mode);
-
-/**
- * vui stop.
- *
- * @param[in]  hndl  the vui handle
- *
- * @return  0: success, otherwise: fail.
- */
-int VuiStop(VuiHandle hndl);
-
-#ifdef __cplusplus
+    LOGT(TAG, "aec create success");
+    return aec;
 }
-#endif /* __cplusplus */
-#endif /* VOICE_SDK_SDK_VUI_INC_VUI_H_ */
+
+void AecDestroy(AecHandle hndl) {
+    if (NULL_PTR_CHECK(hndl)) {
+        return;
+    }
+
+    free(hndl);
+    LOGT(TAG, "aec destroy success");
+}
+
+int AecStart(AecHandle hndl) {
+    LOGT(TAG, "aec start");
+    return 0;
+}
+
+int AecStop(AecHandle hndl) {
+    LOGT(TAG, "aec stop");
+    return 0;
+}

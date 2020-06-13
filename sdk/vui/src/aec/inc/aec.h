@@ -16,65 +16,57 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  **************************************************************************
  *
- * Description : vui.h
+ * Description : aec.h
  * Author      : junlon2006@163.com
- * Date        : 2020.06.11
+ * Date        : 2020.06.13
  *
  **************************************************************************/
-#ifndef VOICE_SDK_SDK_VUI_INC_VUI_H_
-#define VOICE_SDK_SDK_VUI_INC_VUI_H_
+#ifndef VOICE_SDK_SDK_VUI_SRC_AEC_INC_AEC_H_
+#define VOICE_SDK_SDK_VUI_SRC_AEC_INC_AEC_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef enum {
-    UNI_AWAKEN_MODE = 0,
-    UNI_LASR_ONLY_MODE,
-    UNI_RASR_ONLY_MODE,
-    UNI_LASR_RASR_MODE,
-} VuiMode;
-
-typedef void* VuiHandle;
+typedef void* AecHandle;
 
 /**
- * Create vui handle.
+ * Create Aec handle.
  *
  * @param[in]  void.
  *
- * @return  NULL: fail, otherwise: vui handle.
+ * @return  NULL: fail, otherwise: audioin handle.
  */
-VuiHandle VuiCeate(void);
+AecHandle AecCreate();
 
 /**
- * Destrpy vui handle.
+ * Destrpy Aec handle.
  *
- * @param[in]  hndl  the vui handle
+ * @param[in]  hndl  the Aec handle
  *
  * @return  none.
  */
-void VuiDestroy(VuiHandle hndl);
+void AecDestroy(AecHandle hndl);
 
 /**
- * vui start.
+ * Aec start.
  *
- * @param[in]  hndl  the vui handle
- * @param[in]  mode  the vui mode
+ * @param[in]  hndl  the Aec handle
  *
  * @return  0: success, otherwise: fail.
  */
-int VuiStart(VuiHandle hndl, VuiMode mode);
+int AecStart(AecHandle hndl);
 
 /**
- * vui stop.
+ * Aec stop.
  *
- * @param[in]  hndl  the vui handle
+ * @param[in]  hndl  the Aec handle
  *
  * @return  0: success, otherwise: fail.
  */
-int VuiStop(VuiHandle hndl);
+int AecStop(AecHandle hndl);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-#endif /* VOICE_SDK_SDK_VUI_INC_VUI_H_ */
+#endif /* VOICE_SDK_SDK_VUI_SRC_AEC_INC_AEC_H_ */

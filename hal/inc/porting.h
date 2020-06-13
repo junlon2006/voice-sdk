@@ -30,6 +30,8 @@ extern "C" {
 
 #define UNI_WAIT_FOREVER   -1
 #define NULL_PTR_CHECK(p)  (NULL == p)
+#define MZERO(p)            memset(p, 0, sizeof(*p))
+#define OUT_MEM_STRING     "alloc memory failed"
 
 typedef struct {
     void *hdl;
