@@ -22,3 +22,25 @@
  *
  **************************************************************************/
 #include "audioin.h"
+#include "pub.h"
+
+#define TAG "audioin"
+
+AudioInHandle AudioInCreate(void) {
+    LOGD(TAG, "audioIn create");
+    return NULL;
+}
+
+void AudioInDestroy(AudioInHandle hndl) {
+    LOGD(TAG, "audioIn destroy");
+}
+
+int AudioInStart(AudioInHandle hndl) {
+    LOGD(TAG, "audioIn start");
+    return 0;
+}
+
+int AudioInStop(AudioInHandle hndl) {
+    LOGD(TAG, "audioIn stop");
+    return 0;
+}

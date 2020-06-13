@@ -28,6 +28,43 @@
 extern "C" {
 #endif
 
+typedef void* RasrHandle;
+
+/**
+ * Create Rasr handle.
+ *
+ * @param[in]  void.
+ *
+ * @return  NULL: fail, otherwise: audioin handle.
+ */
+RasrHandle RasrCreate();
+
+/**
+ * Destrpy Rasr handle.
+ *
+ * @param[in]  hndl  the Rasr handle
+ *
+ * @return  none.
+ */
+void RasrDestroy(RasrHandle hndl);
+
+/**
+ * Rasr start.
+ *
+ * @param[in]  hndl  the Rasr handle
+ *
+ * @return  0: success, otherwise: fail.
+ */
+int RasrStart(RasrHandle hndl);
+
+/**
+ * Rasr stop.
+ *
+ * @param[in]  hndl  the Rasr handle
+ *
+ * @return  0: success, otherwise: fail.
+ */
+int RasrStop(RasrHandle hndl);
 
 #ifdef __cplusplus
 }

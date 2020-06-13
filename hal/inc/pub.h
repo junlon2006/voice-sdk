@@ -16,31 +16,16 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  **************************************************************************
  *
- * Description : aec.c
+ * Description : pub.h
  * Author      : junlon2006@163.com
  * Date        : 2020.06.13
  *
  **************************************************************************/
-#include "aec.h"
-#include "pub.h"
+#include "errcode.h"
+#include "porting.h"
+#include "log.h"
 
-#define TAG "aec"
-
-AecHandle AecCreate() {
-    LOGD(TAG, "aec create");
-    return NULL;
-}
-
-void AecDestroy(AecHandle hndl) {
-    LOGD(TAG, "aec destroy");
-}
-
-int AecStart(AecHandle hndl) {
-    LOGD(TAG, "aec start");
-    return 0;
-}
-
-int AecStop(AecHandle hndl) {
-    LOGD(TAG, "aec stop");
-    return 0;
-}
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdlib.h>

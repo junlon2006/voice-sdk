@@ -21,7 +21,6 @@
  * Date        : 2017.9.19
  *
  **********************************************************************/
-
 #ifndef EVENT_LIST_INC_UNI_EVENT_LIST_H_
 #define EVENT_LIST_INC_UNI_EVENT_LIST_H_
 

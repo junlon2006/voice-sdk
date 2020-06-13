@@ -22,3 +22,25 @@
  *
  **************************************************************************/
 #include "rasr.h"
+#include "pub.h"
+
+#define TAG "rasr"
+
+RasrHandle RasrCreate() {
+    LOGD(TAG, "rasr create");
+    return NULL;
+}
+
+void RasrDestroy(RasrHandle hndl) {
+    LOGD(TAG, "rasr destroy");
+}
+
+int RasrStart(RasrHandle hndl) {
+    LOGD(TAG, "rasr start");
+    return 0;
+}
+
+int RasrStop(RasrHandle hndl) {
+    LOGD(TAG, "rasr stop");
+    return 0;
+}

@@ -28,7 +28,43 @@
 extern "C" {
 #endif
 
+typedef void* AecHandle;
 
+/**
+ * Create Aec handle.
+ *
+ * @param[in]  void.
+ *
+ * @return  NULL: fail, otherwise: audioin handle.
+ */
+AecHandle AecCreate();
+
+/**
+ * Destrpy Aec handle.
+ *
+ * @param[in]  hndl  the Aec handle
+ *
+ * @return  none.
+ */
+void AecDestroy(AecHandle hndl);
+
+/**
+ * Aec start.
+ *
+ * @param[in]  hndl  the Aec handle
+ *
+ * @return  0: success, otherwise: fail.
+ */
+int AecStart(AecHandle hndl);
+
+/**
+ * Aec stop.
+ *
+ * @param[in]  hndl  the Aec handle
+ *
+ * @return  0: success, otherwise: fail.
+ */
+int AecStop(AecHandle hndl);
 
 #ifdef __cplusplus
 }

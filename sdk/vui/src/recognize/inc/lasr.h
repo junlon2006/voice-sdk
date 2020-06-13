@@ -28,6 +28,44 @@
 extern "C" {
 #endif
 
+typedef void* LasrHandle;
+
+/**
+ * Create Lasr handle.
+ *
+ * @param[in]  void.
+ *
+ * @return  NULL: fail, otherwise: audioin handle.
+ */
+LasrHandle LasrCreate();
+
+/**
+ * Destrpy Lasr handle.
+ *
+ * @param[in]  hndl  the Lasr handle
+ *
+ * @return  none.
+ */
+void LasrDestroy(LasrHandle hndl);
+
+/**
+ * Lasr start.
+ *
+ * @param[in]  hndl  the Lasr handle
+ * @param[in]  mode  the Lasr, 0 awaken mode, 1 cmd recognize mode
+ *
+ * @return  0: success, otherwise: fail.
+ */
+int LasrStart(LasrHandle hndl, int mode);
+
+/**
+ * Lasr stop.
+ *
+ * @param[in]  hndl  the Lasr handle
+ *
+ * @return  0: success, otherwise: fail.
+ */
+int LasrStop(LasrHandle hndl);
 
 #ifdef __cplusplus
 }

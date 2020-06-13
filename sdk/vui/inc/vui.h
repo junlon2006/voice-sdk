@@ -29,7 +29,51 @@
 extern "C" {
 #endif
 
+typedef enum {
+    UNI_AWAKEN_MODE = 0,
+    UNI_LASR_ONLY_MODE,
+    UNI_RASR_ONLY_MODE,
+    UNI_LASR_RASR_MODE,
+} VuiMode;
 
+typedef void* VuiHandle;
+
+/**
+ * Create vui handle.
+ *
+ * @param[in]  void.
+ *
+ * @return  NULL: fail, otherwise: vui handle.
+ */
+VuiHandle VuiCeate(void);
+
+/**
+ * Destrpy vui handle.
+ *
+ * @param[in]  hndl  the vui handle
+ *
+ * @return  none.
+ */
+void VuiDestroy(VuiHandle hndl);
+
+/**
+ * vui start.
+ *
+ * @param[in]  hndl  the vui handle
+ * @param[in]  mode  the vui mode
+ *
+ * @return  0: success, otherwise: fail.
+ */
+int VuiStart(VuiHandle hndl, VuiMode mode);
+
+/**
+ * vui stop.
+ *
+ * @param[in]  hndl  the vui handle
+ *
+ * @return  0: success, otherwise: fail.
+ */
+int VuiStop(VuiHandle hndl);
 
 #ifdef __cplusplus
 }

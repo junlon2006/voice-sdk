@@ -22,3 +22,25 @@
  *
  **************************************************************************/
 #include "lasr.h"
+#include "pub.h"
+
+#define TAG "lasr"
+
+LasrHandle LasrCreate() {
+    LOGD(TAG, "lasr create");
+    return NULL;
+}
+
+void LasrDestroy(LasrHandle hndl) {
+    LOGD(TAG, "lasr destroy");
+}
+
+int LasrStart(LasrHandle hndl, int mode) {
+    LOGD(TAG, "lasr start");
+    return 0;
+}
+
+int LasrStop(LasrHandle hndl) {
+    LOGD(TAG, "lasr stop");
+    return 0;
+}

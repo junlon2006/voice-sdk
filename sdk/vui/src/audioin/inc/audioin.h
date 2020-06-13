@@ -28,6 +28,43 @@
 extern "C" {
 #endif
 
+typedef void* AudioInHandle;
+
+/**
+ * Create audioin handle.
+ *
+ * @param[in]  void.
+ *
+ * @return  NULL: fail, otherwise: audioin handle.
+ */
+AudioInHandle AudioInCreate(void);
+
+/**
+ * Destroy audioin handle.
+ *
+ * @param[in]  hndl audioin handle.
+ *
+ * @return  none.
+ */
+void AudioInDestroy(AudioInHandle hndl);
+
+/**
+ * Start audioin.
+ *
+ * @param[in]  hndl audioin handle.
+ *
+ * @return  0: success, otherwise: fail.
+ */
+int AudioInStart(AudioInHandle hndl);
+
+/**
+ * Stop audioin.
+ *
+ * @param[in]  hndl audioin handle.
+ *
+ * @return  0: success, otherwise: fail.
+ */
+int AudioInStop(AudioInHandle hndl);
 
 #ifdef __cplusplus
 }

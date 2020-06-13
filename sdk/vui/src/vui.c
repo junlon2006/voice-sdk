@@ -23,3 +23,25 @@
  *
  **************************************************************************/
 #include "vui.h"
+#include "pub.h"
+
+#define TAG "vui"
+
+VuiHandle VuiCeate(void) {
+    LOGD(TAG, "vui create");
+    return NULL;
+}
+
+void VuiDestroy(VuiHandle hndl) {
+    LOGD(TAG, "vui destroy");
+}
+
+int VuiStart(VuiHandle hndl, VuiMode mode) {
+    LOGD(TAG, "vui start");
+    return 0;
+}
+
+int VuiStop(VuiHandle hndl) {
+    LOGD(TAG, "vui stop");
+    return 0;
+}

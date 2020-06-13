@@ -3,3 +3,5 @@ add_library(AUDIOIN SHARED
 
 target_include_directories(AUDIOIN PUBLIC
 	"../inc")
+
+target_link_libraries(AUDIOIN HAL)
