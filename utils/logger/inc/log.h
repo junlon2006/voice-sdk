@@ -1,4 +1,3 @@
-
 /**************************************************************************
  * Copyright (C) 2020-2020  Junlon2006
  *
@@ -22,8 +21,8 @@
  * Date        : 2020.06.11
  *
  **************************************************************************/
-#ifndef VOICE_SDK_UTILS_INC_LOG_H_
-#define VOICE_SDK_UTILS_INC_LOG_H_
+#ifndef VOICE_SDK_UTILS_LOGGER_INC_LOG_H_
+#define VOICE_SDK_UTILS_LOGGER_INC_LOG_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -71,4 +70,4 @@ int LogWrite(LogLevel level, const char *tags, const char *function,
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-#endif /* VOICE_SDK_UTILS_INC_LOG_H_ */
+#endif /* VOICE_SDK_UTILS_LOGGER_INC_LOG_H_ */
