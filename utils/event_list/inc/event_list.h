@@ -21,8 +21,8 @@
  * Date        : 2017.9.19
  *
  **********************************************************************/
-#ifndef EVENT_LIST_INC_UNI_EVENT_LIST_H_
-#define EVENT_LIST_INC_UNI_EVENT_LIST_H_
+#ifndef VOICE_SDK_UTILS_EVENT_LIST_INC_EVENT_LIST_H_
+#define VOICE_SDK_UTILS_EVENT_LIST_INC_EVENT_LIST_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,5 +44,5 @@ int             EventListClear(EventListHandle handle);
 
 #ifdef __cplusplus
 }
-#endif
-#endif
+#endif /* __cplusplus */
+#endif /* VOICE_SDK_UTILS_EVENT_LIST_INC_EVENT_LIST_H_ */

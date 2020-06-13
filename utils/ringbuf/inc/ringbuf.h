@@ -21,8 +21,8 @@
  * Date        : 2019.03.17
  *
  **************************************************************************/
-#ifndef RINGBUF_INC_UNI_DATABUF_H_
-#define RINGBUF_INC_UNI_DATABUF_H_
+#ifndef VOICE_SDK_UTILS_RINGBUF_INC_RINGBUF_H_
+#define VOICE_SDK_UTILS_RINGBUF_INC_RINGBUF_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,5 +41,5 @@ int RingBufferRead(char *dst, int readlen, RingBufferHandle handle);
 
 #ifdef __cplusplus
 }
-#endif
-#endif
+#endif /* __cplusplus */
+#endif /* VOICE_SDK_UTILS_RINGBUF_INC_RINGBUF_H_ */

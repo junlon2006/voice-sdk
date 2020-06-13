@@ -49,7 +49,7 @@ void AudioInDestroy(AudioInHandle hndl) {
     }
 
     free(hndl);
-    LOGD(TAG, "audioIn destroy");
+    LOGT(TAG, "audioIn destroy");
 }
 
 int AudioInStart(AudioInHandle hndl) {
