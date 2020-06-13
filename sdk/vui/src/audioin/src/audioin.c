@@ -23,12 +23,19 @@
  **************************************************************************/
 #include "audioin.h"
 #include "pub.h"
+#include "pipeline.h"
 
 #define TAG "audioin"
 
 typedef struct {
-    int param;
+    PipelineNode pipeline;
 } AuidoIn;
+
+static int __pipeline_accept_ctrl(struct PipelineNode *pipeline,
+                                  PipelineEvent *event) {
+    LOGT(TAG, "recv cmd. [%d]", event->type);
+    return 0;
+}
 
 AudioInHandle AudioInCreate(void) {
     AuidoIn *audioin = (AuidoIn *)malloc(sizeof(AuidoIn));
@@ -38,6 +45,8 @@ AudioInHandle AudioInCreate(void) {
     }
 
     MZERO(audioin);
+
+    PipelineNodeInit(&audioin->pipeline, __pipeline_accept_ctrl, NULL, TAG);
 
     LOGT(TAG, "audioIn create success");
     return audioin;

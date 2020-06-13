@@ -44,7 +44,7 @@ typedef void* VuiHandle;
  *
  * @return  NULL: fail, otherwise: vui handle.
  */
-VuiHandle VuiCeate(void);
+VuiHandle VuiCreate(void);
 
 /**
  * Destrpy vui handle.

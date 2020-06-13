@@ -27,8 +27,11 @@
 #include "aec.h"
 #include "audioin.h"
 #include "pub.h"
+#include "pipeline.h"
 
-#define TAG "vui"
+#define TAG                  "vui"
+#define VUI_STATUS_STARTED   1
+#define VUI_STATUS_STOPPED   0
 
 typedef struct Vui {
     AudioInHandle audioin;
@@ -37,6 +40,7 @@ typedef struct Vui {
     RasrHandle    rasr;
     uint8_t       aec_on : 1;
     uint8_t       rasr_on : 1;
+    uint8_t       status : 1;
 } Vui;
 
 static void __destroy_vui_handle(Vui *vui) {
@@ -65,7 +69,7 @@ static void __load_vui_config(Vui *vui) {
     LOGT(TAG, "aec_on=%d, rasr_on=%d", vui->aec_on, vui->rasr_on);
 }
 
-VuiHandle VuiCeate(void) {
+VuiHandle VuiCreate(void) {
     Vui *vui = (Vui *)malloc(sizeof(Vui));
     if (NULL_PTR_CHECK(vui)) {
         LOGE(TAG, OUT_MEM_STRING);
@@ -102,12 +106,54 @@ void VuiDestroy(VuiHandle hndl) {
     LOGT(TAG, "vui destroy");
 }
 
+static bool __lasr_on(VuiMode mode) {
+    return mode == UNI_AWAKEN_MODE || mode == UNI_LASR_ONLY_MODE || UNI_LASR_RASR_MODE;
+}
+
+static bool __rasr_on(Vui *vui, VuiMode mode) {
+    assert(vui->rasr_on);
+    return mode == UNI_RASR_ONLY_MODE || mode == UNI_LASR_RASR_MODE;
+}
+
+#define LINKING(pre, rear) PipelineConnect((PipelineNode *)vui->pre, (PipelineNode *)vui->rear)
+static void __module_linking(VuiHandle hndl, VuiMode mode) {
+    Vui *vui = (Vui *)hndl;
+    if (vui->aec_on) {
+        LINKING(audioin, aec);
+        if (__lasr_on(mode))      LINKING(aec, lasr);
+        if (__rasr_on(vui, mode)) LINKING(aec, rasr);
+    } else {
+        if (__lasr_on(mode))      LINKING(audioin, lasr);
+        if (__rasr_on(vui, mode)) LINKING(audioin, rasr); 
+    }
+}
+
 int VuiStart(VuiHandle hndl, VuiMode mode) {
+    if (NULL_PTR_CHECK(hndl)) {
+        return -INVALID_IN_PARAM;
+    }
+
+    Vui *vui = (Vui *)hndl;
+    if (VUI_STATUS_STARTED == vui->status) {
+        return -VUI_START_ERROR;
+    }
+
+    __module_linking(hndl, mode);
+
     LOGD(TAG, "vui start");
     return 0;
 }
 
 int VuiStop(VuiHandle hndl) {
+    if (NULL_PTR_CHECK(hndl)) {
+        return -INVALID_IN_PARAM;
+    }
+
+    Vui *vui = (Vui *)hndl;
+    if (VUI_STATUS_STOPPED == vui->status) {
+        return -VUI_STOP_ERROR;
+    }
+
     LOGD(TAG, "vui stop");
     return 0;
 }

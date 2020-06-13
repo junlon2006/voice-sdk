@@ -29,7 +29,9 @@
 
 int main() {
     LOGT(TAG, "vui create");
-    VuiHandle vui = VuiCeate();
+    VuiHandle vui = VuiCreate();
+
+    VuiStart(vui, UNI_LASR_RASR_MODE);
 
     LOGT(TAG, "vui destroy");
     VuiDestroy(vui);

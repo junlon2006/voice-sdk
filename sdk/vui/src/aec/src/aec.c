@@ -23,12 +23,25 @@
  **************************************************************************/
 #include "aec.h"
 #include "pub.h"
+#include "pipeline.h"
 
 #define TAG "aec"
 
 typedef struct {
-    int param;
+    PipelineNode pipeline;
 } Aec;
+
+static int __pipeline_accept_data(struct PipelineNode *pipeline,
+                                  char *buffer, int bytes_len) {
+    LOGD(TAG, "recv data. len=%d", bytes_len);
+    return 0;
+}
+
+static int __pipeline_accept_ctrl(struct PipelineNode *pipeline,
+                                  PipelineEvent *event) {
+    LOGT(TAG, "recv cmd. [%d]", event->type);
+    return 0;
+}
 
 AecHandle AecCreate() {
     Aec *aec = (Aec *)malloc(sizeof(Aec));
@@ -38,6 +51,8 @@ AecHandle AecCreate() {
     }
 
     MZERO(aec);
+
+    PipelineNodeInit(&aec->pipeline, __pipeline_accept_ctrl, __pipeline_accept_data, TAG);
 
     LOGT(TAG, "aec create success");
     return aec;

@@ -22,7 +22,6 @@
  *
  **************************************************************************/
 #include "pipeline.h"
-
 #include "log.h"
 #include "list_head.h"
 #include <stdio.h>
@@ -30,14 +29,17 @@
 #define TAG  "pipeline"
 
 int PipelineNodeInit(PipelineNode *node, PipelineAcceptCtrl cb_cmd,
-                     PipelineAcceptData cb_data) {
+                     PipelineAcceptData cb_data, const char *name) {
   if (NULL == node) {
     LOGE(TAG, "param invalid. node=%p", node);
     return -1;
   }
+
   node->self = node;
   node->data = cb_data;
-  node->cmd = cb_cmd;
+  node->cmd  = cb_cmd;
+  node->name[sizeof(node->name) - 1] = '\0';
+  snprintf(node->name, sizeof(node->name) - 1, "%s", name);
   list_init(&node->link);
   list_init(&node->rear_list);
   return 0;
@@ -48,7 +50,9 @@ int PipelineConnect(PipelineNode *pre, PipelineNode *rear) {
     LOGE(TAG, "param invalid. pre=%p, rear=%p", pre, rear);
     return -1;
   }
+
   list_add(&rear->link, &pre->rear_list);
+  LOGD(TAG, "linking %s --> %s", pre->name, rear->name);
   return 0;
 }
 
@@ -58,6 +62,7 @@ int PipelineDisConnect(PipelineNode *pre, PipelineNode *rear) {
     LOGE(TAG, "param invalid. pre=%p, rear=%p", pre, rear);
     return -1;
   }
+
   list_for_each_entry(p, &pre->rear_list, PipelineNode, link) {
     if (p == rear) {
       list_del(&p->link);
@@ -72,6 +77,7 @@ int PipelineClear(PipelineNode *pipeline) {
   if (NULL == pipeline) {
     LOGE(TAG, "param invalid. node=%p", pipeline);
   }
+
   list_for_each_entry_safe(p, n, &pipeline->rear_list, PipelineNode, link) {
     list_del(&p->link);
   }

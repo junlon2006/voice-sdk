@@ -4,4 +4,4 @@ add_library(AEC SHARED
 target_include_directories(AEC PUBLIC
 	"../inc")
 
-target_link_libraries(AEC HAL)
+target_link_libraries(AEC HAL PIPELINE)

@@ -53,10 +53,11 @@ typedef struct PipelineNode {
   PipelineAcceptCtrl  cmd;
   list_head           link;
   list_head           rear_list;
+  char                name[16];
 } PipelineNode;
 
 int PipelineNodeInit(PipelineNode *node, PipelineAcceptCtrl cmd,
-                     PipelineAcceptData data);
+                     PipelineAcceptData data, const char *name);
 int PipelineConnect(PipelineNode *pre, PipelineNode *rear);
 int PipelineDisConnect(PipelineNode *pre, PipelineNode *rear);
 int PipelineClear(PipelineNode *node);
