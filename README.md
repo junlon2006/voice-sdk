@@ -6,4 +6,4 @@ coding for fun，唯一理由就是好玩，并一直好玩下去  致敬Linus�
 WebRTC aec  
 寻找合适的开源离线识别引擎  
 实现事件处理调度器  
-RASR  
+RASR搭建服务端[好玩的docker|k8s|Java|nlp]  
