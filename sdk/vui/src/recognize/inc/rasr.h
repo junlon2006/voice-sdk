@@ -28,16 +28,18 @@
 extern "C" {
 #endif
 
+#include "pub.h"
+
 typedef void* RasrHandle;
 
 /**
  * Create Rasr handle.
  *
- * @param[in]  void.
+ * @param[in]  event_router   event send API.
  *
  * @return  NULL: fail, otherwise: audioin handle.
  */
-RasrHandle RasrCreate();
+RasrHandle RasrCreate(CbEventRouter event_router);
 
 /**
  * Destrpy Rasr handle.

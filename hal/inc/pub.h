@@ -21,6 +21,13 @@
  * Date        : 2020.06.13
  *
  **************************************************************************/
+#ifndef VOICE_SDK_HAL_INC_PUB_H_
+#define VOICE_SDK_HAL_INC_PUB_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "errcode.h"
 #include "porting.h"
 #include "log.h"
@@ -32,3 +39,30 @@
 #include <stdint.h>
 #include <assert.h>
 #include <stdbool.h>
+
+enum {
+
+    UNI_MSG_AUDIOIN_BASE = 0,    /* msg id for audioin */
+
+    UNI_MSG_AEC_BASE     = 1000, /* msg id for aec */
+
+    UNI_MSG_LASR_BASE    = 2000,  /* msg id for lasr */
+    UNI_MSG_LASR_RESULT,
+
+    UNI_MSG_RASR_BASE    = 3000,  /* msg id for rasr */
+
+    UNI_MSG_APP_BASE     = 4000,  /* msg id for app */
+};
+
+typedef struct Event {
+    uint16_t msg_id;
+    void     *content;
+    void     (*free_event_handler)(struct Event *event);
+} Event;
+
+typedef void (*CbEventRouter)(Event *event);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+#endif /* VOICE_SDK_HAL_INC_PUB_H_ */

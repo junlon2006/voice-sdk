@@ -22,13 +22,13 @@
  *
  **************************************************************************/
 #include "aec.h"
-#include "pub.h"
 #include "pipeline.h"
 
 #define TAG "aec"
 
 typedef struct {
-    PipelineNode pipeline;
+    PipelineNode  pipeline;
+    CbEventRouter cb_event;
 } Aec;
 
 static int __pipeline_accept_data(struct PipelineNode *pipeline,
@@ -45,7 +45,11 @@ static int __pipeline_accept_ctrl(struct PipelineNode *pipeline,
     return 0;
 }
 
-AecHandle AecCreate() {
+static void __register_event_router(Aec *aec, CbEventRouter event_router) {
+    aec->cb_event = event_router;
+}
+
+AecHandle AecCreate(CbEventRouter event_router) {
     Aec *aec = (Aec *)malloc(sizeof(Aec));
     if (NULL_PTR_CHECK(aec)) {
         LOGE(TAG, OUT_MEM_STRING);
@@ -55,6 +59,8 @@ AecHandle AecCreate() {
     MZERO(aec);
 
     PipelineNodeInit(&aec->pipeline, __pipeline_accept_ctrl, __pipeline_accept_data, TAG);
+
+    __register_event_router(aec, event_router);
 
     LOGT(TAG, "aec create success");
     return aec;

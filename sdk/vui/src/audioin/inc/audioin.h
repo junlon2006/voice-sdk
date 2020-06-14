@@ -28,16 +28,18 @@
 extern "C" {
 #endif
 
+#include "pub.h"
+
 typedef void* AudioInHandle;
 
 /**
  * Create audioin handle.
  *
- * @param[in]  void.
+ * @param[in]  event_router   event send API.
  *
  * @return  NULL: fail, otherwise: audioin handle.
  */
-AudioInHandle AudioInCreate(void);
+AudioInHandle AudioInCreate(CbEventRouter event_router);
 
 /**
  * Destroy audioin handle.

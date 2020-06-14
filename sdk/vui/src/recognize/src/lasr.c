@@ -22,7 +22,6 @@
  *
  **************************************************************************/
 #include "lasr.h"
-#include "pub.h"
 #include "pipeline.h"
 #include "ringbuf.h"
 
@@ -42,7 +41,14 @@ typedef struct {
     uni_sem_t        sem_stopped;
     uni_sem_t        sem_retrive_audio_data;
     RingBufferHandle ringbuf;
+    CbEventRouter    cb_event;
 } Lasr;
+
+static void __send_event(Lasr *lasr, Event *event) {
+    if (lasr->cb_event) {
+        lasr->cb_event(event);
+    }
+}
 
 static int __pipeline_accept_data(struct PipelineNode *pipeline,
                                   char *buffer, int bytes_len) {
@@ -90,10 +96,21 @@ static void __lasr_stop() {
     LOGT(TAG, "lasr stop");
 }
 
-static void __do_lasr(char *buf, int len) {
+static void __free_lasr_result_event(Event *event) {
+    free(event->content);
+}
+
+#define MOCK_LASR_RESULT  "alex"
+static void __do_lasr(Lasr *lasr, char *buf, int len) {
     static int frame = 0;
     if (frame++ % 120 == 0) {
         LOGT(TAG, "do lasr[%d]", frame);
+        Event event;
+        event.msg_id             = UNI_MSG_LASR_RESULT;
+        event.content            = malloc(strlen(MOCK_LASR_RESULT) + 1);
+        strcpy(event.content, MOCK_LASR_RESULT);
+        event.free_event_handler = __free_lasr_result_event;
+        __send_event(lasr, &event);
     }
 }
 
@@ -115,7 +132,7 @@ static void __lasr(Lasr *lasr) {
         }
 
         RingBufferRead(buf, 512, lasr->ringbuf);
-        __do_lasr(buf, 512);
+        __do_lasr(lasr, buf, 512);
     }
 }
 
@@ -153,7 +170,11 @@ static void __worker_launch(Lasr *lasr) {
     assert(ret == OK);
 }
 
-LasrHandle LasrCreate() {
+static void __register_event_router(Lasr *lasr, CbEventRouter event_router) {
+    lasr->cb_event = event_router;
+}
+
+LasrHandle LasrCreate(CbEventRouter event_router) {
     Lasr *lasr = (Lasr *)malloc(sizeof(Lasr));
     if (NULL_PTR_CHECK(lasr)) {
         LOGE(TAG, OUT_MEM_STRING);
@@ -165,6 +186,9 @@ LasrHandle LasrCreate() {
 
     /* step2. init pipeline */
     PipelineNodeInit(&lasr->pipeline, __pipeline_accept_ctrl, __pipeline_accept_data, TAG);
+
+    /* step3. register event router */
+    __register_event_router(lasr, event_router);
 
     /* step3. launch worker thread */
     __worker_launch(lasr);

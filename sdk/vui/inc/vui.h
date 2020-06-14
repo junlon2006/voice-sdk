@@ -28,6 +28,8 @@
 extern "C" {
 #endif
 
+#include "pub.h"
+
 typedef enum {
     UNI_AWAKEN_MODE = 0,
     UNI_LASR_ONLY_MODE,
@@ -40,11 +42,11 @@ typedef void* VuiHandle;
 /**
  * Create vui handle.
  *
- * @param[in]  void.
+ * @param[in]  event_router   event send API.
  *
  * @return  NULL: fail, otherwise: vui handle.
  */
-VuiHandle VuiCreate(void);
+VuiHandle VuiCreate(CbEventRouter event_router);
 
 /**
  * Destrpy vui handle.

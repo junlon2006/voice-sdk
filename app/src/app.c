@@ -27,11 +27,18 @@
 
 #define TAG "main"
 
+static void __eventRouter(Event *event) {
+    LOGT(TAG, "recv event[%u]. content=%s", event->msg_id, (char *)event->content);
+    if (event->free_event_handler) {
+        event->free_event_handler(event);
+    }
+}
+
 int main() {    
     LogLevelSet(N_LOG_TRACK);
 
     LOGT(TAG, "vui create");
-    VuiHandle vui = VuiCreate();
+    VuiHandle vui = VuiCreate(__eventRouter);
 
     while (true) {
         VuiStart(vui, UNI_LASR_RASR_MODE);

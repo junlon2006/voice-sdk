@@ -22,19 +22,19 @@
  *
  **************************************************************************/
 #include "audioin.h"
-#include "pub.h"
 #include "pipeline.h"
 
 #define TAG                      "audioin"
 #define AUDIOIN_WORKER_STACKSIZE (16 * 1024) /* Linux PTHREAD_STACK_MIN */
 
 typedef struct {
-    PipelineNode pipeline;
-    bool         worker_running;
-    uni_sem_t    sem_worker_thread;
-    bool         pipepile_status;
-    bool         stopping;
-    uni_sem_t    sem_stopped;
+    PipelineNode  pipeline;
+    bool          worker_running;
+    uni_sem_t     sem_worker_thread;
+    bool          pipepile_status;
+    bool          stopping;
+    uni_sem_t     sem_stopped;
+    CbEventRouter cb_event;
 } AudioIn;
 
 static int __pipeline_accept_ctrl(struct PipelineNode *pipeline,
@@ -94,7 +94,11 @@ static void __worker_launch(AudioIn *audioin) {
     assert(ret == OK);
 }
 
-AudioInHandle AudioInCreate(void) {
+static void __register_event_router(AudioIn *audioin, CbEventRouter event_router) {
+    audioin->cb_event = event_router;
+}
+
+AudioInHandle AudioInCreate(CbEventRouter event_router) {
     AudioIn *audioin = (AudioIn *)malloc(sizeof(AudioIn));
     if (NULL_PTR_CHECK(audioin)) {
         LOGE(TAG, OUT_MEM_STRING);
@@ -107,7 +111,10 @@ AudioInHandle AudioInCreate(void) {
     /* step2. init pipeline */
     PipelineNodeInit(&audioin->pipeline, __pipeline_accept_ctrl, NULL, TAG);
 
-    /* step3. launch worker thread */
+    /* step3. register event router */
+    __register_event_router(audioin, event_router);
+
+    /* step4. launch worker thread */
     __worker_launch(audioin);
 
     LOGT(TAG, "audioIn create success");

@@ -28,6 +28,8 @@
 extern "C" {
 #endif
 
+#include "pub.h"
+
 typedef void* LasrHandle;
 
 /**
@@ -37,7 +39,7 @@ typedef void* LasrHandle;
  *
  * @return  NULL: fail, otherwise: audioin handle.
  */
-LasrHandle LasrCreate();
+LasrHandle LasrCreate(CbEventRouter event_router);
 
 /**
  * Destrpy Lasr handle.

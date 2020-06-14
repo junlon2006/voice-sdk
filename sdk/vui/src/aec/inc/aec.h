@@ -28,16 +28,18 @@
 extern "C" {
 #endif
 
+#include "pub.h"
+
 typedef void* AecHandle;
 
 /**
  * Create Aec handle.
  *
- * @param[in]  void.
+ * @param[in]  event_router   event send API.
  *
  * @return  NULL: fail, otherwise: audioin handle.
  */
-AecHandle AecCreate();
+AecHandle AecCreate(CbEventRouter event_router);
 
 /**
  * Destrpy Aec handle.
