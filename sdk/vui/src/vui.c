@@ -38,9 +38,9 @@ typedef struct Vui {
     AecHandle     aec;
     LasrHandle    lasr;
     RasrHandle    rasr;
-    uint8_t       aec_on : 1;
+    uint8_t       aec_on  : 1;
     uint8_t       rasr_on : 1;
-    uint8_t       status : 1;
+    uint8_t       status  : 1;
 } Vui;
 
 static void __destroy_vui_handle(Vui *vui) {
@@ -115,9 +115,16 @@ static bool __rasr_on(Vui *vui, VuiMode mode) {
     return mode == UNI_RASR_ONLY_MODE || mode == UNI_LASR_RASR_MODE;
 }
 
+static void __linking_module_launch(Vui *vui) {
+    PipelineEvent event;
+    PipelineNode *root = (PipelineNode *)vui->audioin;
+    event.type         = PIPELINE_START;
+    event.content      = NULL;
+    PipelinePushCmd(root, event);
+}
+
 #define LINKING(pre, rear) PipelineConnect((PipelineNode *)vui->pre, (PipelineNode *)vui->rear)
-static void __module_linking(VuiHandle hndl, VuiMode mode) {
-    Vui *vui = (Vui *)hndl;
+static void __module_linking(Vui *vui, VuiMode mode) {
     if (vui->aec_on) {
         LINKING(audioin, aec);
         if (__lasr_on(mode))      LINKING(aec, lasr);
@@ -126,6 +133,11 @@ static void __module_linking(VuiHandle hndl, VuiMode mode) {
         if (__lasr_on(mode))      LINKING(audioin, lasr);
         if (__rasr_on(vui, mode)) LINKING(audioin, rasr); 
     }
+}
+
+static void __set_vui_status(Vui *vui, uint8_t status) {
+    vui->status = status;
+    LOGD(TAG, "vui status[%d]", status);
 }
 
 int VuiStart(VuiHandle hndl, VuiMode mode) {
@@ -138,10 +150,28 @@ int VuiStart(VuiHandle hndl, VuiMode mode) {
         return -VUI_START_ERROR;
     }
 
-    __module_linking(hndl, mode);
+    __module_linking(vui, mode);
+    __linking_module_launch(vui);
+    __set_vui_status(vui, VUI_STATUS_STARTED);
 
     LOGD(TAG, "vui start");
     return 0;
+}
+
+static void __linking_module_stop(Vui *vui) {
+    PipelineEvent event;
+    PipelineNode *root = (PipelineNode *)vui->audioin;
+    event.type         = PIPELINE_STOP;
+    event.content      = NULL;
+    PipelinePushCmd(root, event);
+}
+
+#define UNLINKING(node) if (node) PipelineClear((PipelineNode *)node)
+static void __module_unlinking(Vui *vui) {
+    UNLINKING(vui->audioin);
+    UNLINKING(vui->aec);
+    UNLINKING(vui->lasr);
+    UNLINKING(vui->rasr);
 }
 
 int VuiStop(VuiHandle hndl) {
@@ -153,6 +183,10 @@ int VuiStop(VuiHandle hndl) {
     if (VUI_STATUS_STOPPED == vui->status) {
         return -VUI_STOP_ERROR;
     }
+
+    __linking_module_stop(vui);
+    __module_unlinking(vui);
+    __set_vui_status(vui, VUI_STATUS_STOPPED);
 
     LOGD(TAG, "vui stop");
     return 0;

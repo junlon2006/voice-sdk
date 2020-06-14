@@ -33,6 +33,8 @@ int main() {
 
     VuiStart(vui, UNI_LASR_RASR_MODE);
 
+    VuiStop(vui);
+
     LOGT(TAG, "vui destroy");
     VuiDestroy(vui);
 
