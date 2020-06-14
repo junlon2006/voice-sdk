@@ -40,8 +40,9 @@ extern "C" {
 #include <assert.h>
 #include <stdbool.h>
 
-enum {
+#define ONE_FRAME_BYTES  (512)
 
+enum {
     UNI_MSG_AUDIOIN_BASE = 0,    /* msg id for audioin */
 
     UNI_MSG_AEC_BASE     = 1000, /* msg id for aec */

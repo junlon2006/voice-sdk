@@ -24,33 +24,49 @@
 #include "app.h"
 #include "pub.h"
 #include "vui.h"
+#include "event_list.h"
 
 #define TAG "main"
 
-static void __eventRouter(Event *event) {
-    LOGT(TAG, "recv event[%u]. content=%s", event->msg_id, (char *)event->content);
-    if (event->free_event_handler) {
-        event->free_event_handler(event);
+static EventListHandle g_event_list = NULL; 
+static VuiHandle       g_vui = NULL;
+
+static void __event_list_event_handler(void *event) {
+    Event *ev = (Event *)event;
+    LOGT(TAG, "msg=%d, content=%s", ev->msg_id, ev->content);
+
+    if (ev->msg_id == UNI_MSG_LASR_RESULT) {
+        LOGT(TAG, "relaunch vui");
+        VuiStop(g_vui);
+        VuiStart(g_vui, UNI_LASR_RASR_MODE);
+        LOGT(TAG, "relaunch vui done");
     }
 }
 
-int main() {    
+static void __event_list_event_free_handler(void *event) {
+    Event *ev = (Event *)event;
+    if (ev && ev->free_event_handler) {
+        ev->free_event_handler(ev);
+    }
+}
+
+static void __eventRouter(Event *event) {
+    /* use event_list to async process */
+    EventListAdd(g_event_list, event, EVENT_LIST_PRIORITY_MEDIUM);
+}
+
+int main() {
     LogLevelSet(N_LOG_TRACK);
 
-    LOGT(TAG, "vui create");
-    VuiHandle vui = VuiCreate(__eventRouter);
+    g_event_list = EventListCreate(__event_list_event_handler, __event_list_event_free_handler);
 
-    while (true) {
-        VuiStart(vui, UNI_LASR_RASR_MODE);
+    g_vui = VuiCreate(__eventRouter);
 
-        uni_sleep(5000);
-
-        VuiStop(vui);
-    }
+    VuiStart(g_vui, UNI_LASR_RASR_MODE);
 
     while (true) uni_sleep(10000);
 
-    VuiDestroy(vui);
+    VuiDestroy(g_vui);
     LOGT(TAG, "exit");
 
     return 0;

@@ -65,7 +65,7 @@ static int __pipeline_accept_ctrl(struct PipelineNode *pipeline,
 
 static void* __audioin_worker(void *args) {
     AudioIn *audioin = (AudioIn *)args;
-    char buf[512];
+    char buf[ONE_FRAME_BYTES];
 
     while (audioin->worker_running) {
         if (audioin->stopping) {
