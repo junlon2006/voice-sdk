@@ -48,24 +48,6 @@ AudioInHandle AudioInCreate(void);
  */
 void AudioInDestroy(AudioInHandle hndl);
 
-/**
- * Start audioin.
- *
- * @param[in]  hndl audioin handle.
- *
- * @return  0: success, otherwise: fail.
- */
-int AudioInStart(AudioInHandle hndl);
-
-/**
- * Stop audioin.
- *
- * @param[in]  hndl audioin handle.
- *
- * @return  0: success, otherwise: fail.
- */
-int AudioInStop(AudioInHandle hndl);
-
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

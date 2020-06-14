@@ -68,13 +68,3 @@ void AecDestroy(AecHandle hndl) {
     free(hndl);
     LOGT(TAG, "aec destroy success");
 }
-
-int AecStart(AecHandle hndl) {
-    LOGT(TAG, "aec start");
-    return 0;
-}
-
-int AecStop(AecHandle hndl) {
-    LOGT(TAG, "aec stop");
-    return 0;
-}

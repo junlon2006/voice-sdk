@@ -48,24 +48,6 @@ RasrHandle RasrCreate();
  */
 void RasrDestroy(RasrHandle hndl);
 
-/**
- * Rasr start.
- *
- * @param[in]  hndl  the Rasr handle
- *
- * @return  0: success, otherwise: fail.
- */
-int RasrStart(RasrHandle hndl);
-
-/**
- * Rasr stop.
- *
- * @param[in]  hndl  the Rasr handle
- *
- * @return  0: success, otherwise: fail.
- */
-int RasrStop(RasrHandle hndl);
-
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

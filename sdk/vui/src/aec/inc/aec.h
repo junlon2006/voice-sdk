@@ -48,24 +48,6 @@ AecHandle AecCreate();
  */
 void AecDestroy(AecHandle hndl);
 
-/**
- * Aec start.
- *
- * @param[in]  hndl  the Aec handle
- *
- * @return  0: success, otherwise: fail.
- */
-int AecStart(AecHandle hndl);
-
-/**
- * Aec stop.
- *
- * @param[in]  hndl  the Aec handle
- *
- * @return  0: success, otherwise: fail.
- */
-int AecStop(AecHandle hndl);
-
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
