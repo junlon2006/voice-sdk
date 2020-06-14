@@ -22,13 +22,13 @@
  *
  **************************************************************************/
 #include "rasr.h"
-#include "pub.h"
 #include "pipeline.h"
 
 #define TAG "rasr"
 
 typedef struct {
-    PipelineNode pipeline;
+    PipelineNode  pipeline;
+    CbEventRouter cb_event;
 } Rasr;
 
 static int __pipeline_accept_data(struct PipelineNode *pipeline,
@@ -43,7 +43,11 @@ static int __pipeline_accept_ctrl(struct PipelineNode *pipeline,
     return 0;
 }
 
-RasrHandle RasrCreate() {
+static void __register_event_router(Rasr *rasr, CbEventRouter event_router) {
+    rasr->cb_event = event_router;
+}
+
+RasrHandle RasrCreate(CbEventRouter event_router) {
     Rasr *rasr = (Rasr *)malloc(sizeof(Rasr));
     if (NULL_PTR_CHECK(rasr)) {
         LOGE(TAG, OUT_MEM_STRING);
@@ -53,6 +57,8 @@ RasrHandle RasrCreate() {
     MZERO(rasr);
 
     PipelineNodeInit(&rasr->pipeline, __pipeline_accept_ctrl, __pipeline_accept_data, TAG);
+
+    __register_event_router(rasr, event_router);
 
     LOGT(TAG, "rasr create success");
     return rasr;

@@ -39,6 +39,7 @@ typedef struct Vui {
     AecHandle     aec;
     LasrHandle    lasr;
     RasrHandle    rasr;
+    CbEventRouter cb_event;
     uint8_t       aec_on  : 1;
     uint8_t       rasr_on : 1;
     uint8_t       status  : 1;
@@ -70,7 +71,11 @@ static void __load_vui_config(Vui *vui) {
     LOGT(TAG, "aec_on=%d, rasr_on=%d", vui->aec_on, vui->rasr_on);
 }
 
-VuiHandle VuiCreate(void) {
+static void __register_event_router(Vui *vui, CbEventRouter event_router) {
+    vui->cb_event = event_router;
+}
+
+VuiHandle VuiCreate(CbEventRouter event_router) {
     Vui *vui = (Vui *)malloc(sizeof(Vui));
     if (NULL_PTR_CHECK(vui)) {
         LOGE(TAG, OUT_MEM_STRING);
@@ -80,11 +85,12 @@ VuiHandle VuiCreate(void) {
     MZERO(vui);
 
     __load_vui_config(vui);
+    __register_event_router(vui, event_router);
 
-    vui->audioin                = AudioInCreate();
-    if (vui->aec_on) vui->aec   = AecCreate();
-    vui->lasr                   = LasrCreate();
-    if (vui->rasr_on) vui->rasr = RasrCreate();
+    vui->audioin                = AudioInCreate(event_router);
+    if (vui->aec_on) vui->aec   = AecCreate(event_router);
+    vui->lasr                   = LasrCreate(event_router);
+    if (vui->rasr_on) vui->rasr = RasrCreate(event_router);
 
     if (NULL_PTR_CHECK(vui->audioin) ||
         (vui->aec_on && NULL_PTR_CHECK(vui->aec)) ||
