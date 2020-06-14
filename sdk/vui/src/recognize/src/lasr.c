@@ -26,9 +26,8 @@
 #include "ringbuf.h"
 
 #define TAG                   "lasr"
-#define LASR_RINGBUF_SIZE     (512 * 60)  /* 960ms 16K 16bit */
+#define LASR_RINGBUF_SIZE     (ONE_FRAME_BYTES * 60)  /* 960ms 16K 16bit */
 #define LASR_WORKER_STACKSIZE (16 * 1024) /* Linux PTHREAD_STACK_MIN */
-
 
 typedef struct {
     PipelineNode     pipeline;
@@ -53,9 +52,9 @@ static void __send_event(Lasr *lasr, Event *event) {
 static int __pipeline_accept_data(struct PipelineNode *pipeline,
                                   char *buffer, int bytes_len) {
     Lasr *lasr = (Lasr *)pipeline;
-    assert(bytes_len == 512);
+    assert(bytes_len == ONE_FRAME_BYTES);
 
-    if (RingBufferGetFreeSize(lasr->ringbuf) < 512) {
+    if (RingBufferGetFreeSize(lasr->ringbuf) < ONE_FRAME_BYTES) {
         LOGW(TAG, "not enough audio buffer, lasr process too slow");
         return 0;
     }
@@ -98,6 +97,7 @@ static void __lasr_stop() {
 
 static void __free_lasr_result_event(Event *event) {
     free(event->content);
+    free(event);
 }
 
 #define MOCK_LASR_RESULT  "alex"
@@ -105,17 +105,17 @@ static void __do_lasr(Lasr *lasr, char *buf, int len) {
     static int frame = 0;
     if (frame++ % 120 == 0) {
         LOGT(TAG, "do lasr[%d]", frame);
-        Event event;
-        event.msg_id             = UNI_MSG_LASR_RESULT;
-        event.content            = malloc(strlen(MOCK_LASR_RESULT) + 1);
-        strcpy(event.content, MOCK_LASR_RESULT);
-        event.free_event_handler = __free_lasr_result_event;
-        __send_event(lasr, &event);
+        Event *event = malloc(sizeof(Event));
+        event->msg_id             = UNI_MSG_LASR_RESULT;
+        event->content            = malloc(strlen(MOCK_LASR_RESULT) + 1);
+        strcpy(event->content, MOCK_LASR_RESULT);
+        event->free_event_handler = __free_lasr_result_event;
+        __send_event(lasr, event);
     }
 }
 
 static void __lasr(Lasr *lasr) {
-    char buf[512];
+    char buf[ONE_FRAME_BYTES];
     while (true) {
         if (lasr->lasr_stopping) {
             lasr->lasr_stopping = false;
@@ -126,13 +126,13 @@ static void __lasr(Lasr *lasr) {
         }
 
         uni_sem_wait(&lasr->sem_retrive_audio_data, 100);
-        if (RingBufferGetDataSize(lasr->ringbuf) < 512) {
+        if (RingBufferGetDataSize(lasr->ringbuf) < ONE_FRAME_BYTES) {
             LOGW(TAG, "cannot retrieve enough audio data");
             continue;
         }
 
-        RingBufferRead(buf, 512, lasr->ringbuf);
-        __do_lasr(lasr, buf, 512);
+        RingBufferRead(buf, ONE_FRAME_BYTES, lasr->ringbuf);
+        __do_lasr(lasr, buf, ONE_FRAME_BYTES);
     }
 }
 
