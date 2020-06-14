@@ -105,7 +105,7 @@ static void __do_lasr(Lasr *lasr, char *buf, int len) {
     static int frame = 0;
     if (frame++ % 120 == 0) {
         LOGT(TAG, "do lasr[%d]", frame);
-        Event *event = malloc(sizeof(Event));
+        Event *event              = malloc(sizeof(Event));
         event->msg_id             = UNI_MSG_LASR_RESULT;
         event->content            = malloc(strlen(MOCK_LASR_RESULT) + 1);
         strcpy(event->content, MOCK_LASR_RESULT);
