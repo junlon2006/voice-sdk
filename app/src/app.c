@@ -28,8 +28,8 @@
 
 #define TAG "main"
 
-static EventListHandle g_event_list; 
-static VuiHandle g_vui;
+static EventListHandle g_event_list = NULL; 
+static VuiHandle       g_vui = NULL;
 
 static void __event_list_event_handler(void *event) {
     Event *ev = (Event *)event;
