@@ -28,20 +28,22 @@
 #define TAG "main"
 
 int main() {
-    while (1) {
+    //while (1) {
     LOGT(TAG, "vui create");
     VuiHandle vui = VuiCreate();
 
     VuiStart(vui, UNI_LASR_RASR_MODE);
 
-    VuiStop(vui);
+    //VuiStop(vui);
 
     LOGT(TAG, "vui destroy");
-    VuiDestroy(vui);
+    //VuiDestroy(vui);
 
-    uni_sleep(100);
+    //uni_sleep(100);
     LOGT(TAG, "exit");
-    }
+    //}
+
+    while (true) uni_sleep(10000);
 
     return 0;
 }

@@ -40,7 +40,6 @@ static int __pipeline_accept_data(struct PipelineNode *pipeline,
 static int __pipeline_accept_ctrl(struct PipelineNode *pipeline,
                                   PipelineEvent *event) {
     LOGT(TAG, "recv cmd. [%d]", event->type);
-    PipelinePushCmd(pipeline, event);
     return 0;
 }
 

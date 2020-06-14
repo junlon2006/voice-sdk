@@ -34,6 +34,7 @@ typedef struct {
 static int __pipeline_accept_data(struct PipelineNode *pipeline,
                                   char *buffer, int bytes_len) {
     LOGD(TAG, "recv data. len=%d, aec process on orignal buffer", bytes_len);
+    PipelinePushData(pipeline, buffer, bytes_len);
     return 0;
 }
 
