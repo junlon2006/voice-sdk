@@ -28,6 +28,7 @@
 #define TAG "main"
 
 int main() {
+    while (1) {
     LOGT(TAG, "vui create");
     VuiHandle vui = VuiCreate();
 
@@ -40,6 +41,7 @@ int main() {
 
     uni_sleep(100);
     LOGT(TAG, "exit");
+    }
 
     return 0;
 }

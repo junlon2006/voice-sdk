@@ -61,7 +61,7 @@ int PipelineConnect(PipelineNode *pre, PipelineNode *rear);
 int PipelineDisConnect(PipelineNode *pre, PipelineNode *rear);
 int PipelineClear(PipelineNode *node);
 int PipelinePushData(PipelineNode *node, char *buffer, int bytes_len);
-int PipelinePushCmd(PipelineNode *node, PipelineEvent event);
+int PipelinePushCmd(PipelineNode *node, PipelineEvent *event);
 
 #ifdef __cplusplus
 }
