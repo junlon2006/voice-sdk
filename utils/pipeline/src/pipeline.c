@@ -93,23 +93,21 @@ int PipelinePushData(PipelineNode *node, char *buffer, int bytes_len) {
   list_for_each_entry(p, &node->rear_list, PipelineNode, link) {
     LOGD(TAG, "push data. from %s --> %s", node->name, p->name);
     p->data(p, buffer, bytes_len);
-    PipelinePushData(p, buffer, bytes_len);
   }
 
   return 0;
 }
 
-int PipelinePushCmd(PipelineNode *node, PipelineEvent event) {
+int PipelinePushCmd(PipelineNode *node, PipelineEvent *event) {
   PipelineNode *p;
-  if (NULL == node) {
-    LOGE(TAG, "param invalid. node=%p", node);
+  if (NULL == node || NULL == event) {
+    LOGE(TAG, "param invalid. node=%p, event=%p", node, event);
     return -1;
   }
 
   list_for_each_entry(p, &node->rear_list, PipelineNode, link) {
-    LOGD(TAG, "push cmd[%d]. from %s --> %s", event.type, node->name, p->name);
-    p->cmd(p, &event);
-    PipelinePushCmd(p, event);
+    LOGD(TAG, "push cmd[%d]. from %s --> %s", event->type, node->name, p->name);
+    p->cmd(p, event);
   }
 
   return 0;

@@ -34,6 +34,7 @@
 #define VUI_STATUS_STOPPED   0
 
 typedef struct Vui {
+    PipelineNode  root;
     AudioInHandle audioin;
     AecHandle     aec;
     LasrHandle    lasr;
@@ -94,6 +95,8 @@ VuiHandle VuiCreate(void) {
         return NULL;
     }
 
+    PipelineNodeInit(&vui->root, NULL, NULL, TAG);
+
     LOGT(TAG, "vui create success");
     return vui;
 }
@@ -117,14 +120,15 @@ static bool __rasr_on(Vui *vui, VuiMode mode) {
 
 static void __linking_module_launch(Vui *vui) {
     PipelineEvent event;
-    PipelineNode *root = (PipelineNode *)vui->audioin;
+    PipelineNode *root = &vui->root;
     event.type         = PIPELINE_START;
     event.content      = NULL;
-    PipelinePushCmd(root, event);
+    PipelinePushCmd(root, &event);
 }
 
-#define LINKING(pre, rear) PipelineConnect((PipelineNode *)vui->pre, (PipelineNode *)vui->rear)
+#define LINKING(pre, rear) PipelineConnect((PipelineNode *) vui->pre, (PipelineNode *)vui->rear)
 static void __module_linking(Vui *vui, VuiMode mode) {
+    PipelineConnect(&vui->root, (PipelineNode *)vui->audioin);
     if (vui->aec_on) {
         LINKING(audioin, aec);
         if (__lasr_on(mode))      LINKING(aec, lasr);
@@ -160,14 +164,15 @@ int VuiStart(VuiHandle hndl, VuiMode mode) {
 
 static void __linking_module_stop(Vui *vui) {
     PipelineEvent event;
-    PipelineNode *root = (PipelineNode *)vui->audioin;
+    PipelineNode *root = &vui->root;
     event.type         = PIPELINE_STOP;
     event.content      = NULL;
-    PipelinePushCmd(root, event);
+    PipelinePushCmd(root, &event);
 }
 
 #define UNLINKING(node) if (node) PipelineClear((PipelineNode *)node)
 static void __module_unlinking(Vui *vui) {
+    UNLINKING(vui);
     UNLINKING(vui->audioin);
     UNLINKING(vui->aec);
     UNLINKING(vui->lasr);

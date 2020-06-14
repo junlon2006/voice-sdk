@@ -34,12 +34,14 @@ typedef struct {
 static int __pipeline_accept_data(struct PipelineNode *pipeline,
                                   char *buffer, int bytes_len) {
     LOGD(TAG, "recv data. len=%d, aec process on orignal buffer", bytes_len);
+    PipelinePushData(pipeline, buffer, bytes_len);
     return 0;
 }
 
 static int __pipeline_accept_ctrl(struct PipelineNode *pipeline,
                                   PipelineEvent *event) {
     LOGT(TAG, "recv cmd. [%d]", event->type);
+    PipelinePushCmd(pipeline, event);
     return 0;
 }
 
@@ -65,14 +67,4 @@ void AecDestroy(AecHandle hndl) {
 
     free(hndl);
     LOGT(TAG, "aec destroy success");
-}
-
-int AecStart(AecHandle hndl) {
-    LOGT(TAG, "aec start");
-    return 0;
-}
-
-int AecStop(AecHandle hndl) {
-    LOGT(TAG, "aec stop");
-    return 0;
 }

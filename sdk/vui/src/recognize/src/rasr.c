@@ -66,13 +66,3 @@ void RasrDestroy(RasrHandle hndl) {
     free(hndl);
     LOGT(TAG, "rasr destroy success");
 }
-
-int RasrStart(RasrHandle hndl) {
-    LOGT(TAG, "rasr start");
-    return 0;
-}
-
-int RasrStop(RasrHandle hndl) {
-    LOGT(TAG, "rasr stop");
-    return 0;
-}

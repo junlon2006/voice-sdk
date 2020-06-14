@@ -27,18 +27,23 @@
 
 #define TAG "main"
 
-int main() {
+int main() {    
+    LogLevelSet(N_LOG_TRACK);
+
     LOGT(TAG, "vui create");
     VuiHandle vui = VuiCreate();
 
-    VuiStart(vui, UNI_LASR_RASR_MODE);
+    while (true) {
+        VuiStart(vui, UNI_LASR_RASR_MODE);
 
-    VuiStop(vui);
+        uni_sleep(5000);
 
-    LOGT(TAG, "vui destroy");
+        VuiStop(vui);
+    }
+
+    while (true) uni_sleep(10000);
+
     VuiDestroy(vui);
-
-    uni_sleep(100);
     LOGT(TAG, "exit");
 
     return 0;

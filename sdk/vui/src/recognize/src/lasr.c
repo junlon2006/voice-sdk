@@ -24,23 +24,133 @@
 #include "lasr.h"
 #include "pub.h"
 #include "pipeline.h"
+#include "ringbuf.h"
 
-#define TAG "lasr"
+#define TAG                   "lasr"
+#define LASR_RINGBUF_SIZE     (512 * 60)  /* 960ms 16K 16bit */
+#define LASR_WORKER_STACKSIZE (16 * 1024) /* Linux PTHREAD_STACK_MIN */
+
 
 typedef struct {
-    PipelineNode pipeline;
+    PipelineNode     pipeline;
+    bool             worker_running;
+    bool             lasr_stopping;
+    uni_sem_t        sem_worker_thread;
+    uni_sem_t        sem_starting;
+    uni_sem_t        sem_started;
+    uni_sem_t        sem_stopping;
+    uni_sem_t        sem_stopped;
+    uni_sem_t        sem_retrive_audio_data;
+    RingBufferHandle ringbuf;
 } Lasr;
 
 static int __pipeline_accept_data(struct PipelineNode *pipeline,
                                   char *buffer, int bytes_len) {
-    LOGD(TAG, "recv data. len=%d", bytes_len);
+    Lasr *lasr = (Lasr *)pipeline;
+    assert(bytes_len == 512);
+
+    if (RingBufferGetFreeSize(lasr->ringbuf) < 512) {
+        LOGW(TAG, "not enough audio buffer, lasr process too slow");
+        return 0;
+    }
+
+    RingBufferWrite(lasr->ringbuf, buffer, bytes_len);
+    uni_sem_signal(&lasr->sem_retrive_audio_data);
+
+    //LOGD(TAG, "recv data. len=%d", bytes_len);
     return 0;
 }
 
 static int __pipeline_accept_ctrl(struct PipelineNode *pipeline,
                                   PipelineEvent *event) {
-    LOGT(TAG, "recv cmd. [%d]", event->type);
+    Lasr *lasr = (Lasr *)pipeline;
+
+    switch (event->type) {
+        case PIPELINE_START: {
+            LOGT(TAG, "recv lasr start cmd");
+            RingBufferClear(lasr->ringbuf);
+            uni_sem_signal(&lasr->sem_starting);
+            uni_sem_wait(&lasr->sem_started, UNI_WAIT_FOREVER);
+        }
+        break;
+        case PIPELINE_STOP: {
+            LOGT(TAG, "recv lasr stop cmd");
+            uni_sem_signal(&lasr->sem_stopping);
+            lasr->lasr_stopping = true;
+            uni_sem_wait(&lasr->sem_stopped, UNI_WAIT_FOREVER);
+        }
+        break;
+        default:
+        LOGE(TAG, "unsupport cmd[%d]", event->type);
+    }
     return 0;
+}
+
+static void __lasr_stop() {
+    LOGT(TAG, "lasr stop");
+}
+
+static void __do_lasr(char *buf, int len) {
+    static int frame = 0;
+    if (frame++ % 120 == 0) {
+        LOGT(TAG, "do lasr[%d]", frame);
+    }
+}
+
+static void __lasr(Lasr *lasr) {
+    char buf[512];
+    while (true) {
+        if (lasr->lasr_stopping) {
+            lasr->lasr_stopping = false;
+            uni_sem_wait(&lasr->sem_stopping, UNI_WAIT_FOREVER);
+            __lasr_stop();
+            uni_sem_signal(&lasr->sem_stopped);
+            break;
+        }
+
+        uni_sem_wait(&lasr->sem_retrive_audio_data, 100);
+        if (RingBufferGetDataSize(lasr->ringbuf) < 512) {
+            LOGW(TAG, "cannot retrieve enough audio data");
+            continue;
+        }
+
+        RingBufferRead(buf, 512, lasr->ringbuf);
+        __do_lasr(buf, 512);
+    }
+}
+
+static void* __lasr_worker(void *args) {
+    Lasr *lasr = (Lasr *)args;
+
+    while (lasr->worker_running) {
+        uni_sem_wait(&lasr->sem_starting, UNI_WAIT_FOREVER);
+        /* step1. do some sync process */
+        uni_sem_signal(&lasr->sem_started);
+
+        /* step2. do lasr */
+        __lasr(lasr);
+    }
+
+    LOGW(TAG, "worker exit");
+    uni_sem_signal(&lasr->sem_worker_thread);
+
+    return NULL;
+}
+
+static void __worker_launch(Lasr *lasr) {
+    lasr->ringbuf = RingBufferCreate(LASR_RINGBUF_SIZE);
+    assert(NULL != lasr->ringbuf);
+
+    uni_sem_new(&lasr->sem_worker_thread, 0);
+    uni_sem_new(&lasr->sem_retrive_audio_data, 0);
+    uni_sem_new(&lasr->sem_starting, 0);
+    uni_sem_new(&lasr->sem_started, 0);
+    uni_sem_new(&lasr->sem_stopping, 0);
+    uni_sem_new(&lasr->sem_stopped, 0);
+
+    lasr->worker_running = true;
+    int ret = uni_thread_new(TAG, __lasr_worker, lasr, LASR_WORKER_STACKSIZE);
+    assert(ret == OK);
 }
 
 LasrHandle LasrCreate() {
@@ -50,29 +160,40 @@ LasrHandle LasrCreate() {
         return NULL;
     }
 
+    /* step1. reset lasr handle */
     MZERO(lasr);
 
+    /* step2. init pipeline */
     PipelineNodeInit(&lasr->pipeline, __pipeline_accept_ctrl, __pipeline_accept_data, TAG);
+
+    /* step3. launch worker thread */
+    __worker_launch(lasr);
 
     LOGT(TAG, "lasr create success");
     return lasr;
 }
 
+static void __destroy_woker(Lasr *lasr) {
+    lasr->worker_running = false;
+    uni_sem_wait(&lasr->sem_worker_thread, UNI_WAIT_FOREVER);
+    uni_sem_free(&lasr->sem_worker_thread);
+    uni_sem_free(&lasr->sem_starting);
+    uni_sem_free(&lasr->sem_started);
+    uni_sem_free(&lasr->sem_stopping);
+    uni_sem_free(&lasr->sem_stopped);
+    uni_sem_free(&lasr->sem_retrive_audio_data);
+
+    RingBufferDestroy(lasr->ringbuf);
+}
+
 void LasrDestroy(LasrHandle hndl) {
-    if (NULL_PTR_CHECK(hndl)) {
+    Lasr *lasr = (Lasr *)hndl;
+    if (NULL_PTR_CHECK(lasr)) {
         return;
     }
 
+    __destroy_woker(lasr);
+
     free(hndl);
     LOGT(TAG, "lasr destroy success");
-}
-
-int LasrStart(LasrHandle hndl, int mode) {
-    LOGT(TAG, "lasr start");
-    return 0;
-}
-
-int LasrStop(LasrHandle hndl) {
-    LOGT(TAG, "lasr stop");
-    return 0;
 }
