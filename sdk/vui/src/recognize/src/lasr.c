@@ -23,12 +23,25 @@
  **************************************************************************/
 #include "lasr.h"
 #include "pub.h"
+#include "pipeline.h"
 
 #define TAG "lasr"
 
 typedef struct {
-    int param;
+    PipelineNode pipeline;
 } Lasr;
+
+static int __pipeline_accept_data(struct PipelineNode *pipeline,
+                                  char *buffer, int bytes_len) {
+    LOGD(TAG, "recv data. len=%d", bytes_len);
+    return 0;
+}
+
+static int __pipeline_accept_ctrl(struct PipelineNode *pipeline,
+                                  PipelineEvent *event) {
+    LOGT(TAG, "recv cmd. [%d]", event->type);
+    return 0;
+}
 
 LasrHandle LasrCreate() {
     Lasr *lasr = (Lasr *)malloc(sizeof(Lasr));
@@ -38,6 +51,8 @@ LasrHandle LasrCreate() {
     }
 
     MZERO(lasr);
+
+    PipelineNodeInit(&lasr->pipeline, __pipeline_accept_ctrl, __pipeline_accept_data, TAG);
 
     LOGT(TAG, "lasr create success");
     return lasr;

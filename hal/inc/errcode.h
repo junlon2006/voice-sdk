@@ -34,6 +34,8 @@ enum {
     OUT_OF_MEMORY,
     INVALID_IN_PARAM,
     CREATE_TASK_FAIL,
+    VUI_START_ERROR,
+    VUI_STOP_ERROR,
 };
 
 #ifdef __cplusplus

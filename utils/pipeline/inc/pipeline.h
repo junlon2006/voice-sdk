@@ -31,9 +31,8 @@ extern "C" {
 #include "list_head.h"
 
 typedef enum {
-  PIPELINE_START,
-  PIPELINE_STOP,
-  PIPELINE_BREAK
+  PIPELINE_START = 1,
+  PIPELINE_STOP
 } PipelineEventType;
 
 typedef struct {
@@ -53,13 +52,16 @@ typedef struct PipelineNode {
   PipelineAcceptCtrl  cmd;
   list_head           link;
   list_head           rear_list;
+  char                name[8];
 } PipelineNode;
 
 int PipelineNodeInit(PipelineNode *node, PipelineAcceptCtrl cmd,
-                     PipelineAcceptData data);
+                     PipelineAcceptData data, const char *name);
 int PipelineConnect(PipelineNode *pre, PipelineNode *rear);
 int PipelineDisConnect(PipelineNode *pre, PipelineNode *rear);
 int PipelineClear(PipelineNode *node);
+int PipelinePushData(PipelineNode *node, char *buffer, int bytes_len);
+int PipelinePushCmd(PipelineNode *node, PipelineEvent event);
 
 #ifdef __cplusplus
 }
