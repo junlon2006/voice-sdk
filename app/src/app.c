@@ -28,14 +28,16 @@
 
 #define TAG "main"
 
-static EventListHandle g_event_list = NULL; 
+static EventListHandle g_event_list = NULL;
 static VuiHandle       g_vui = NULL;
 
 static void __event_list_event_handler(void *event) {
     Event *ev = (Event *)event;
-    LOGT(TAG, "msg=%d, content=%s", ev->msg_id, ev->content);
 
     if (ev->msg_id == UNI_MSG_LASR_RESULT) {
+        LasrResult *lasr_result = (LasrResult *)ev->content;
+        LOGT(TAG, "msg=%d, wuw[%d]=%s, out of date[%d]", ev->msg_id,
+             lasr_result->vui_id, lasr_result->keyword, VuiEventOutOfDate(g_vui, lasr_result->vui_id));
         LOGT(TAG, "relaunch vui");
         VuiStop(g_vui);
         VuiStart(g_vui, UNI_LASR_RASR_MODE);

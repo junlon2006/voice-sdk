@@ -76,6 +76,16 @@ int VuiStart(VuiHandle hndl, VuiMode mode);
  */
 int VuiStop(VuiHandle hndl);
 
+/**
+ * Check vui event out of date or not.
+ *
+ * @param[in]  hndl  the vui handle
+ * @param[in]  vui_id  vui id
+ *
+ * @return false or true.
+ */
+bool VuiEventOutOfDate(VuiHandle hndl, int8_t vui_id);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

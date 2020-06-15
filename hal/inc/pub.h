@@ -31,6 +31,7 @@ extern "C" {
 #include "errcode.h"
 #include "porting.h"
 #include "log.h"
+#include "cJSON.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -43,9 +44,9 @@ extern "C" {
 #define ONE_FRAME_BYTES  (512)
 
 enum {
-    UNI_MSG_AUDIOIN_BASE = 0,    /* msg id for audioin */
+    UNI_MSG_AUDIOIN_BASE = 0,     /* msg id for audioin */
 
-    UNI_MSG_AEC_BASE     = 1000, /* msg id for aec */
+    UNI_MSG_AEC_BASE     = 1000,  /* msg id for aec */
 
     UNI_MSG_LASR_BASE    = 2000,  /* msg id for lasr */
     UNI_MSG_LASR_RESULT,
@@ -62,6 +63,17 @@ typedef struct Event {
 } Event;
 
 typedef void (*CbEventRouter)(Event *event);
+
+/* pipeline struct */
+typedef struct {
+    int8_t vui_id;
+} PipelineStartContent;
+
+/* asr struct */
+typedef struct {
+    char   *keyword;
+    int8_t vui_id;
+} LasrResult;
 
 #ifdef __cplusplus
 }

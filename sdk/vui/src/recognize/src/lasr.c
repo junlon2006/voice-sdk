@@ -41,6 +41,7 @@ typedef struct {
     uni_sem_t        sem_retrive_audio_data;
     RingBufferHandle ringbuf;
     CbEventRouter    cb_event;
+    int8_t           vui_id;
 } Lasr;
 
 static void __send_event(Lasr *lasr, Event *event) {
@@ -61,8 +62,6 @@ static int __pipeline_accept_data(struct PipelineNode *pipeline,
 
     RingBufferWrite(lasr->ringbuf, buffer, bytes_len);
     uni_sem_signal(&lasr->sem_retrive_audio_data);
-
-    //LOGD(TAG, "recv data. len=%d", bytes_len);
     return 0;
 }
 
@@ -73,6 +72,7 @@ static int __pipeline_accept_ctrl(struct PipelineNode *pipeline,
     switch (event->type) {
         case PIPELINE_START: {
             LOGT(TAG, "recv lasr start cmd");
+            lasr->vui_id = ((PipelineStartContent *)event->content)->vui_id;
             RingBufferClear(lasr->ringbuf);
             uni_sem_signal(&lasr->sem_starting);
             uni_sem_wait(&lasr->sem_started, UNI_WAIT_FOREVER);
@@ -95,21 +95,29 @@ static void __lasr_stop() {
     LOGT(TAG, "lasr stop");
 }
 
-static void __free_lasr_result_event(Event *event) {
-    free(event->content);
+static void __lasr_result_event_free_handler(Event *event) {
+    LasrResult *lasr_result = (LasrResult *)event->content;
+    free(lasr_result->keyword);
+    free(lasr_result);
     free(event);
 }
 
-#define MOCK_LASR_RESULT  "alex"
+#define MOCK_LASR_RESULT  "alexa"
 static void __do_lasr(Lasr *lasr, char *buf, int len) {
     static int frame = 0;
     if (frame++ % 120 == 0) {
         LOGT(TAG, "do lasr[%d]", frame);
-        Event *event              = malloc(sizeof(Event));
+        Event *event              = (Event *)malloc(sizeof(Event));
+        assert(event != NULL);
+        LasrResult *lasr_result   = (LasrResult *)malloc(sizeof(LasrResult));
+        assert(event != NULL);
+        lasr_result->vui_id       = lasr->vui_id;
+        lasr_result->keyword      = malloc(strlen(MOCK_LASR_RESULT) + 1);
+        assert(lasr_result->keyword != NULL);
+        strcpy(lasr_result->keyword, MOCK_LASR_RESULT);
         event->msg_id             = UNI_MSG_LASR_RESULT;
-        event->content            = malloc(strlen(MOCK_LASR_RESULT) + 1);
-        strcpy(event->content, MOCK_LASR_RESULT);
-        event->free_event_handler = __free_lasr_result_event;
+        event->content            = lasr_result;
+        event->free_event_handler = __lasr_result_event_free_handler;
         __send_event(lasr, event);
     }
 }
@@ -190,7 +198,7 @@ LasrHandle LasrCreate(CbEventRouter event_router) {
     /* step3. register event router */
     __register_event_router(lasr, event_router);
 
-    /* step3. launch worker thread */
+    /* step4. launch worker thread */
     __worker_launch(lasr);
 
     LOGT(TAG, "lasr create success");

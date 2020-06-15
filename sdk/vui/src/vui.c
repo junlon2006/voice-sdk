@@ -43,6 +43,7 @@ typedef struct Vui {
     uint8_t       aec_on  : 1;
     uint8_t       rasr_on : 1;
     uint8_t       status  : 1;
+    uint8_t       vui_id  : 5; /* filter out of date event */
 } Vui;
 
 static void __destroy_vui_handle(Vui *vui) {
@@ -125,10 +126,12 @@ static bool __rasr_on(Vui *vui, VuiMode mode) {
 }
 
 static void __linking_module_launch(Vui *vui) {
-    PipelineEvent event;
     PipelineNode *root = &vui->root;
+    PipelineEvent event;
+    PipelineStartContent content;
+    content.vui_id     = vui->vui_id;
     event.type         = PIPELINE_START;
-    event.content      = NULL;
+    event.content      = &content;
     PipelinePushCmd(root, &event);
 }
 
@@ -141,8 +144,13 @@ static void __module_linking(Vui *vui, VuiMode mode) {
         if (__rasr_on(vui, mode)) LINKING(aec, rasr);
     } else {
         if (__lasr_on(mode))      LINKING(audioin, lasr);
-        if (__rasr_on(vui, mode)) LINKING(audioin, rasr); 
+        if (__rasr_on(vui, mode)) LINKING(audioin, rasr);
     }
+}
+
+static void __set_current_vui_id(Vui *vui) {
+    vui->vui_id++;
+    LOGT(TAG, "vui_id=%d", vui->vui_id);
 }
 
 static void __set_vui_status(Vui *vui, uint8_t status) {
@@ -160,6 +168,7 @@ int VuiStart(VuiHandle hndl, VuiMode mode) {
         return -VUI_START_ERROR;
     }
 
+    __set_current_vui_id(vui);
     __module_linking(vui, mode);
     __linking_module_launch(vui);
     __set_vui_status(vui, VUI_STATUS_STARTED);
@@ -201,4 +210,13 @@ int VuiStop(VuiHandle hndl) {
 
     LOGD(TAG, "vui stop");
     return 0;
+}
+
+bool VuiEventOutOfDate(VuiHandle hndl, int8_t vui_id) {
+    Vui *vui = (Vui *)hndl;
+    if (NULL_PTR_CHECK(vui)) {
+        return true;
+    }
+
+    return vui->vui_id != vui_id;
 }
