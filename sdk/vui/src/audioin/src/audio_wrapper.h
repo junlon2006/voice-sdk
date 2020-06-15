@@ -16,79 +16,59 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  **************************************************************************
  *
- * Description : vui.h
+ * Description : audio_wrapper.h
  * Author      : junlon2006@163.com
- * Date        : 2020.06.11
+ * Date        : 2020.06.13
  *
  **************************************************************************/
-#ifndef VOICE_SDK_SDK_VUI_INC_VUI_H_
-#define VOICE_SDK_SDK_VUI_INC_VUI_H_
+#ifndef VOICE_SDK_VUI_SRC_AUDIOIN_SRC_AUDIO_WRAPPER_H_
+#define VOICE_SDK_VUI_SRC_AUDIOIN_SRC_AUDIO_WRAPPER_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "pub.h"
-
-#define VUI_VERSION  "v1.0.0 "__DATE__" " __TIME__
-
-typedef enum {
-    UNI_AWAKEN_MODE = 0,
-    UNI_LASR_ONLY_MODE,
-    UNI_RASR_ONLY_MODE,
-    UNI_LASR_RASR_MODE,
-} VuiMode;
-
-typedef void* VuiHandle;
+typedef void* AudioWrapperHandle;
+typedef void (*CbAudioWrapperData)(const char *data, unsigned int len, void *user_data);
 
 /**
- * Create vui handle.
+ * Create audio wrapper handle.
  *
- * @param[in]  event_router   event send API.
+ * @param[in]  cb_data   audio source data callback.
+ * @param[in]  user_data   audio source data user_data.
  *
- * @return  NULL: fail, otherwise: vui handle.
+ * @return  NULL: fail, otherwise: audioin handle.
  */
-VuiHandle VuiCreate(CbEventRouter event_router);
+AudioWrapperHandle AudioWrapperCreate(CbAudioWrapperData cb_data, void *user_data);
 
 /**
- * Destrpy vui handle.
+ * Destroy audio wrapper handle.
  *
- * @param[in]  hndl  the vui handle
+ * @param[in]  hndl audio wrapper handle.
  *
  * @return  none.
  */
-void VuiDestroy(VuiHandle hndl);
+void AudioWrapperDestroy(AudioWrapperHandle hndl);
 
 /**
- * vui start.
+ * Start audio wrapper to capture audio.
  *
- * @param[in]  hndl  the vui handle
- * @param[in]  mode  the vui mode
+ * @param[in] hndl audio wrapper handle.
  *
  * @return  0: success, otherwise: fail.
  */
-int VuiStart(VuiHandle hndl, VuiMode mode);
+int AudioWrapperStart(AudioWrapperHandle hndl);
 
 /**
- * vui stop.
+ * Stop audio wrapper to capture audio.
  *
- * @param[in]  hndl  the vui handle
+ * @param[in] hndl audio wrapper handle.
  *
  * @return  0: success, otherwise: fail.
  */
-int VuiStop(VuiHandle hndl);
-
-/**
- * Check vui event out of date or not.
- *
- * @param[in]  hndl  the vui handle
- * @param[in]  vui_id  vui id
- *
- * @return false or true.
- */
-bool VuiEventOutOfDate(VuiHandle hndl, int8_t vui_id);
+int AudioWrapperStop(AudioWrapperHandle hndl);
 
 #ifdef __cplusplus
 }
-#endif /* __cplusplus */
-#endif /* VOICE_SDK_SDK_VUI_INC_VUI_H_ */
+#endif  /* __cplusplus */
+#endif  /* VOICE_SDK_VUI_SRC_AUDIOIN_SRC_AUDIO_WRAPPER_H_ */
