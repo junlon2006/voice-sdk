@@ -85,6 +85,8 @@ VuiHandle VuiCreate(CbEventRouter event_router) {
 
     MZERO(vui);
 
+    LOGT(TAG, "%s", VUI_VERSION);
+
     __load_vui_config(vui);
     __register_event_router(vui, event_router);
 
