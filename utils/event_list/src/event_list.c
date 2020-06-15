@@ -209,6 +209,9 @@ static void _register_interuppt_handler(EventList *event_list) {
 
 static void _worker_thread_create(EventList *event_list) {
   pthread_condattr_t attr;
+  pthread_attr_t ar;
+  pthread_attr_init(&ar);
+  pthread_attr_setstacksize(&ar, 16 * 1024);
   pthread_condattr_init(&attr);
   pthread_condattr_setclock(&attr, CLOCK_MONOTONIC);
   pthread_cond_init(&event_list->cond, &attr);
@@ -235,6 +238,7 @@ EventListHandle EventListCreate(EventListEventHandler event_handler,
 int EventListDestroy(EventListHandle handle) {
   EventList *event_list = (EventList*)handle;
   event_list->running = 0;
+  pthread_join(event_list->pid, NULL);
   return 0;
 }
 
