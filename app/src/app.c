@@ -69,7 +69,7 @@ int main() {
     while (true) uni_sleep(10000);
 
     VuiDestroy(g_vui);
-    LOGT(TAG, "exit");
 
+    LOGT(TAG, "exit");
     return 0;
 }
