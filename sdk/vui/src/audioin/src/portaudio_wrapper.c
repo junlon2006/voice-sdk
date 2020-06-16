@@ -47,7 +47,7 @@ static int __portaudio_callback(const void* inputBuffer,
         audio_wrapper->cb_data(inputBuffer, numSamples << 1, audio_wrapper->user_data);
     }
 
-    LOGD(TAG, "portaudio data. buf=%p, len=%d", inputBuffer, numSamples * 2);
+    LOGD(TAG, "portaudio data. buf=%p, len=%d", inputBuffer, numSamples << 1);
 }
 
 AudioWrapperHandle AudioWrapperCreate(CbAudioWrapperData cb_data, void *user_data) {
@@ -60,7 +60,7 @@ AudioWrapperHandle AudioWrapperCreate(CbAudioWrapperData cb_data, void *user_dat
     PaError err;
     err = Pa_Initialize();
     if (err != paNoError) {
-        LOGE(TAG, "Failed to initialize PortAudio. err=%d", err);
+        LOGE(TAG, "Failed to initialize PortAudio. err=%s", Pa_GetErrorText(err));
     }
 
     PaStreamParameters inputParameters;
@@ -80,7 +80,7 @@ AudioWrapperHandle AudioWrapperCreate(CbAudioWrapperData cb_data, void *user_dat
                         __portaudio_callback,
                         audio_wrapper);
     if (err != paNoError) {
-        LOGE(TAG, "Failed to open PortAudio default stream. err=%d", err);
+        LOGE(TAG, "Failed to open PortAudio default stream. err=%s", Pa_GetErrorText(err));
     }
 
     return audio_wrapper;
@@ -99,7 +99,7 @@ int AudioWrapperStart(AudioWrapperHandle hndl) {
     AudioWrapper *audio_wrapper = (AudioWrapper *)hndl;
     PaError err = Pa_StartStream(audio_wrapper->pa_stream);
     if (err != paNoError) {
-        LOGE(TAG, "Failed to start PortAudio stream");
+        LOGE(TAG, "Failed to start PortAudio stream. err=%s", Pa_GetErrorText(err));
         return FAIL;
     }
 
@@ -110,7 +110,7 @@ int AudioWrapperStop(AudioWrapperHandle hndl) {
     AudioWrapper *audio_wrapper = (AudioWrapper *)hndl;
     PaError err = Pa_StopStream(audio_wrapper->pa_stream);
     if (err != paNoError) {
-        LOGE(TAG, "Failed to stop PortAudio stream");
+        LOGE(TAG, "Failed to stop PortAudio stream. err=%s", Pa_GetErrorText(err));
         return FAIL;
     }
 
