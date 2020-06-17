@@ -31,8 +31,8 @@ extern "C" {
 #include "list_head.h"
 
 typedef enum {
-  PIPELINE_START = 1, /* offset cannot be zero */
-  PIPELINE_STOP
+  PIPELINE_STOP = 0, /* must be zero, cannot change it. default status */
+  PIPELINE_START,
 } PipelineEventType;
 
 typedef struct {
