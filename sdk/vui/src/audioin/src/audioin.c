@@ -35,6 +35,7 @@ typedef struct {
     bool               worker_running;
     uni_sem_t          sem_worker_thread;
     bool               pipepile_status;
+    uni_sem_t          sem_starting;
     bool               stopping;
     uni_sem_t          sem_stopped;
     CbEventRouter      cb_event;
@@ -45,27 +46,43 @@ typedef struct {
 static int __pipeline_accept_ctrl(struct PipelineNode *pipeline,
                                   PipelineEvent *event) {
     AudioIn *audioin = (AudioIn *)pipeline;
-    LOGT(TAG, "recv cmd. [%d]", event->type);
 
     switch (event->type) {
         case PIPELINE_START: {
+            LOGT(TAG, "recv cmd. PIPELINE_START[%d]", event->type);
+
+            /* step1. start next node first */
             PipelinePushCmd(pipeline, event);
+
+            /* step2. worker task start consume audio data */
             audioin->pipepile_status = PIPELINE_START;
+            uni_sem_signal(&audioin->sem_starting);
+
+            /* step3. start audio wrapper [the actual audio producer] */
             AudioWrapperStart(audioin->audio_wrapper);
         }
         break;
         case PIPELINE_STOP: {
+            LOGT(TAG, "recv cmd. PIPELINE_STOP[%d]", event->type);
+
+            /* step1. stop audio wrapper [the actual audio producer] */
             AudioWrapperStop(audioin->audio_wrapper);
+
+            /* step2. worker stask stop consume audio data [use sem to sync]*/
             audioin->pipepile_status = PIPELINE_STOP;
             audioin->stopping        = true;
             uni_sem_wait(&audioin->sem_stopped, UNI_WAIT_FOREVER);
+
+            /* step3. clear ringbuf audio data, drop outofdate audio */
             RingBufferClear(audioin->ringbuf);
 
+            /* step4. stop next node */
             PipelinePushCmd(pipeline, event);
         }
         break;
         default:
         LOGW(TAG, "recv unsupport cmd[%d]", event->type);
+        assert(false);
         break;
     }
 
@@ -77,9 +94,13 @@ static void* __audioin_worker(void *args) {
     char buf[ONE_FRAME_BYTES];
 
     while (audioin->worker_running) {
-        if (audioin->stopping) {
-            audioin->stopping = false;
-            uni_sem_signal(&audioin->sem_stopped);
+        if (audioin->pipepile_status == PIPELINE_STOP) {
+            if (audioin->stopping) {
+                audioin->stopping = false;
+                uni_sem_signal(&audioin->sem_stopped);
+            }
+
+            uni_sem_wait(&audioin->sem_starting, 1000);
         }
 
         if (audioin->pipepile_status == PIPELINE_START) {
@@ -90,8 +111,6 @@ static void* __audioin_worker(void *args) {
 
             RingBufferRead(buf, sizeof(buf), audioin->ringbuf);
             PipelinePushData(&audioin->pipeline, buf, sizeof(buf));
-        } else {
-            uni_sleep(10);
         }
     }
 
@@ -120,6 +139,7 @@ static void __worker_launch(AudioIn *audioin) {
 
     /* step2. audioin worker task */
     uni_sem_new(&audioin->sem_worker_thread, 0);
+    uni_sem_new(&audioin->sem_starting, 0);
     uni_sem_new(&audioin->sem_stopped, 0);
     audioin->worker_running = true;
     int ret = uni_thread_new(TAG, __audioin_worker, audioin, AUDIOIN_WORKER_STACKSIZE);
@@ -160,6 +180,7 @@ static void __destroy_woker(AudioIn *audioin) {
     uni_sem_wait(&audioin->sem_worker_thread, UNI_WAIT_FOREVER);
     uni_sem_free(&audioin->sem_worker_thread);
     uni_sem_free(&audioin->sem_stopped);
+    uni_sem_free(&audioin->sem_starting);
 
     RingBufferDestroy(audioin->ringbuf);
 }
