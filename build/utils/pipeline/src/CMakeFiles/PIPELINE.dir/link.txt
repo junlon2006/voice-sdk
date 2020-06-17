@@ -1,0 +1,1 @@
+/usr/bin/gcc  -fPIC   -shared -Wl,-soname,libPIPELINE.so -o libPIPELINE.so CMakeFiles/PIPELINE.dir/pipeline.c.o ../../logger/src/libLOG.so ../../list_head/src/libLIST.so -Wl,-rpath,/home/junlon2006/workspace/voice-sdk/build/utils/logger/src:/home/junlon2006/workspace/voice-sdk/build/utils/list_head/src 

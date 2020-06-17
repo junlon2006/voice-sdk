@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../utils/event_list/src/../inc/event_list.h
+
+../utils/list_head/src/../inc/list_head.h
+
+/home/junlon2006/workspace/voice-sdk/utils/event_list/src/event_list.c
+event_list.h
+/home/junlon2006/workspace/voice-sdk/utils/event_list/src/event_list.h
+list_head.h
+/home/junlon2006/workspace/voice-sdk/utils/event_list/src/list_head.h
+stdlib.h
+-
+string.h
+-
+pthread.h
+-
+inttypes.h
+-
+

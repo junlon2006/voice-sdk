@@ -1,0 +1,1 @@
+/usr/bin/gcc  -fPIC   -shared -Wl,-soname,libEVENT_LIST.so -o libEVENT_LIST.so CMakeFiles/EVENT_LIST.dir/event_list.c.o ../../list_head/src/libLIST.so -Wl,-rpath,/home/junlon2006/workspace/voice-sdk/build/utils/list_head/src 

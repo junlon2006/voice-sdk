@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../utils/list_head/src/../inc/list_head.h
+
+../utils/logger/src/../inc/log.h
+
+../utils/pipeline/src/../inc/pipeline.h
+list_head.h
+../utils/pipeline/src/../inc/list_head.h
+
+/home/junlon2006/workspace/voice-sdk/utils/pipeline/src/pipeline.c
+pipeline.h
+/home/junlon2006/workspace/voice-sdk/utils/pipeline/src/pipeline.h
+log.h
+/home/junlon2006/workspace/voice-sdk/utils/pipeline/src/log.h
+list_head.h
+/home/junlon2006/workspace/voice-sdk/utils/pipeline/src/list_head.h
+stdio.h
+-
+

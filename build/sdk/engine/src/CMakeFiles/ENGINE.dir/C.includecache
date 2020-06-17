@@ -1,0 +1,14 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../sdk/engine/src/../inc/engine.h
+
+/home/junlon2006/workspace/voice-sdk/sdk/engine/src/engine.c
+engine.h
+/home/junlon2006/workspace/voice-sdk/sdk/engine/src/engine.h
+

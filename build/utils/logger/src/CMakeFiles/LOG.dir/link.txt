@@ -1,0 +1,1 @@
+/usr/bin/gcc  -fPIC   -shared -Wl,-soname,libLOG.so -o libLOG.so CMakeFiles/LOG.dir/log.c.o 

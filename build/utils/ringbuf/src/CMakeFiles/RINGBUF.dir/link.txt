@@ -1,0 +1,1 @@
+/usr/bin/gcc  -fPIC   -shared -Wl,-soname,libRINGBUF.so -o libRINGBUF.so CMakeFiles/RINGBUF.dir/ringbuf.c.o 

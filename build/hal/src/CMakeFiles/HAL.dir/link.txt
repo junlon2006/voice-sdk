@@ -1,0 +1,1 @@
+/usr/bin/gcc  -fPIC   -shared -Wl,-soname,libHAL.so -o libHAL.so CMakeFiles/HAL.dir/porting.c.o CMakeFiles/HAL.dir/pub.c.o ../../utils/logger/src/libLOG.so ../../utils/cJSON/src/libCJSON.so -lpthread -lm -Wl,-rpath,/home/junlon2006/workspace/voice-sdk/build/utils/logger/src:/home/junlon2006/workspace/voice-sdk/build/utils/cJSON/src 
