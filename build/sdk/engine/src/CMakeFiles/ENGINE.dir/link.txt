@@ -1,1 +1,0 @@
-/usr/bin/gcc  -fPIC   -shared -Wl,-soname,libENGINE.so -o libENGINE.so CMakeFiles/ENGINE.dir/engine.c.o 

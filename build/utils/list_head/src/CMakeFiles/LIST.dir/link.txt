@@ -1,1 +1,0 @@
-/usr/bin/gcc  -fPIC   -shared -Wl,-soname,libLIST.so -o libLIST.so CMakeFiles/LIST.dir/list_head.c.o 
