@@ -79,6 +79,16 @@ int VuiStart(VuiHandle hndl, VuiMode mode);
 int VuiStop(VuiHandle hndl);
 
 /**
+ * vui relaunch.
+ *
+ * @param[in]  hndl  the vui handle
+ * @param[in]  mode  the vui mode
+ *
+ * @return  0: success, otherwise: fail.
+ */
+int VuiRelaunch(VuiHandle hndl, VuiMode mode);
+
+/**
  * Check vui event out of date or not.
  *
  * @param[in]  hndl  the vui handle
