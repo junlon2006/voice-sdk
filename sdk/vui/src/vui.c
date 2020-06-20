@@ -214,6 +214,19 @@ int VuiStop(VuiHandle hndl) {
     return 0;
 }
 
+int VuiRelaunch(VuiHandle hndl, VuiMode mode) {
+    if (0 != VuiStop(hndl)) {
+        return FAIL;
+    }
+
+    if (0 != VuiStart(hndl, mode)) {
+        return FAIL;
+    }
+
+    LOGD(TAG, "vui relaunch");
+    return OK;
+}
+
 bool VuiEventOutOfDate(VuiHandle hndl, int8_t vui_id) {
     Vui *vui = (Vui *)hndl;
     if (NULL_PTR_CHECK(vui)) {

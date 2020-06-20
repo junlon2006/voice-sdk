@@ -28,24 +28,27 @@
 
 #define TAG "main"
 
-static EventListHandle g_event_list = NULL;
-static VuiHandle       g_vui = NULL;
+typedef struct {
+    EventListHandle vui_event_list;
+    VuiHandle       vui_hndl;
+} App;
 
-static void __event_list_event_handler(void *event) {
+static App g_app = {0};
+
+static void __vui_event_handler(void *event) {
     Event *ev = (Event *)event;
 
     if (ev->msg_id == UNI_MSG_LASR_RESULT) {
         LasrResult *lasr_result = (LasrResult *)ev->content;
         LOGT(TAG, "msg=%d, wuw[%d]=%s, out of date[%d]", ev->msg_id,
-             lasr_result->vui_id, lasr_result->keyword, VuiEventOutOfDate(g_vui, lasr_result->vui_id));
+             lasr_result->vui_id, lasr_result->keyword, VuiEventOutOfDate(g_app.vui_hndl, lasr_result->vui_id));
         LOGT(TAG, "relaunch vui");
-        VuiStop(g_vui);
-        VuiStart(g_vui, UNI_LASR_RASR_MODE);
+        VuiRelaunch(g_app.vui_hndl, UNI_LASR_RASR_MODE);
         LOGT(TAG, "relaunch vui done");
     }
 }
 
-static void __event_list_event_free_handler(void *event) {
+static void __vui_event_free_handler(void *event) {
     Event *ev = (Event *)event;
     if (ev && ev->free_event_handler) {
         ev->free_event_handler(ev);
@@ -54,21 +57,21 @@ static void __event_list_event_free_handler(void *event) {
 
 static void __eventRouter(Event *event) {
     /* use event_list to async process */
-    EventListAdd(g_event_list, event, EVENT_LIST_PRIORITY_MEDIUM);
+    EventListAdd(g_app.vui_event_list, event, EVENT_LIST_PRIORITY_MEDIUM);
 }
 
 int main() {
     LogLevelSet(N_LOG_TRACK);
 
-    g_event_list = EventListCreate(__event_list_event_handler, __event_list_event_free_handler, 16 * 1024);
+    g_app.vui_event_list = EventListCreate(__vui_event_handler, __vui_event_free_handler, 16 * 1024);
 
-    g_vui = VuiCreate(__eventRouter);
+    g_app.vui_hndl = VuiCreate(__eventRouter);
 
-    VuiStart(g_vui, UNI_LASR_RASR_MODE);
+    VuiStart(g_app.vui_hndl, UNI_LASR_RASR_MODE);
 
     while (true) uni_sleep(10000);
 
-    VuiDestroy(g_vui);
+    VuiDestroy(g_app.vui_hndl);
 
     LOGT(TAG, "exit");
     return 0;
