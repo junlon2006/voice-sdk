@@ -60,7 +60,7 @@ static void __eventRouter(Event *event) {
 int main() {
     LogLevelSet(N_LOG_TRACK);
 
-    g_event_list = EventListCreate(__event_list_event_handler, __event_list_event_free_handler);
+    g_event_list = EventListCreate(__event_list_event_handler, __event_list_event_free_handler, 16 * 1024);
 
     g_vui = VuiCreate(__eventRouter);
 

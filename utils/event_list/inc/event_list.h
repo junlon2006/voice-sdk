@@ -37,7 +37,8 @@ typedef void (*EventListEventHandler)(void *event);
 typedef void (*EventListEventFreeHandler)(void *event);
 
 EventListHandle EventListCreate(EventListEventHandler event_handler,
-                                EventListEventFreeHandler free_handler);
+                                EventListEventFreeHandler free_handler,
+                                unsigned int stack_size);
 int             EventListDestroy(EventListHandle handle);
 int             EventListAdd(EventListHandle handle, void *event, int priority);
 int             EventListClear(EventListHandle handle);

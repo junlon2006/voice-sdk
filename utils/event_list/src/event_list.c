@@ -207,11 +207,11 @@ static void _register_interuppt_handler(EventList *event_list) {
   event_list->lowest_interrupt_handler = _lowest_interruptable_handler;
 }
 
-static void _worker_thread_create(EventList *event_list) {
+static void _worker_thread_create(EventList *event_list, unsigned int stack_size) {
   pthread_condattr_t attr;
   pthread_attr_t ar;
   pthread_attr_init(&ar);
-  pthread_attr_setstacksize(&ar, 16 * 1024);
+  pthread_attr_setstacksize(&ar, stack_size);
   pthread_condattr_init(&attr);
   pthread_condattr_setclock(&attr, CLOCK_MONOTONIC);
   pthread_cond_init(&event_list->cond, &attr);
@@ -221,7 +221,8 @@ static void _worker_thread_create(EventList *event_list) {
 }
 
 EventListHandle EventListCreate(EventListEventHandler event_handler,
-                                EventListEventFreeHandler free_handler) {
+                                EventListEventFreeHandler free_handler,
+                                unsigned int stack_size) {
   EventList *event_list = NULL;
   if (NULL == (event_list = (EventList*)malloc(sizeof(EventList)))) {
     return NULL;
@@ -231,7 +232,7 @@ EventListHandle EventListCreate(EventListEventHandler event_handler,
   _register_event_handler(event_list, event_handler);
   _register_free_handler(event_list, free_handler);
   _register_interuppt_handler(event_list);
-  _worker_thread_create(event_list);
+  _worker_thread_create(event_list, stack_size);
   return event_list;
 }
 
