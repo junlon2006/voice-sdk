@@ -61,6 +61,8 @@ AudioWrapperHandle AudioWrapperCreate(CbAudioWrapperData cb_data, void *user_dat
     err = Pa_Initialize();
     if (err != paNoError) {
         LOGE(TAG, "Failed to initialize PortAudio. err=%s", Pa_GetErrorText(err));
+        free(audio_wrapper);
+        return NULL;
     }
 
     PaStreamParameters inputParameters;
@@ -81,6 +83,8 @@ AudioWrapperHandle AudioWrapperCreate(CbAudioWrapperData cb_data, void *user_dat
                         audio_wrapper);
     if (err != paNoError) {
         LOGE(TAG, "Failed to open PortAudio default stream. err=%s", Pa_GetErrorText(err));
+        free(audio_wrapper);
+        return NULL;
     }
 
     return audio_wrapper;
