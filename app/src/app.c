@@ -24,12 +24,12 @@
 #include "app.h"
 #include "pub.h"
 #include "vui.h"
-#include "event_list.h"
+#include "event_loop.h"
 
 #define TAG "main"
 
 typedef struct {
-    EventListHandle vui_event_list;
+    EventLoopHandle vui_event_loop;
     VuiHandle       vui_hndl;
 } App;
 
@@ -56,14 +56,14 @@ static void __vui_event_free_handler(void *event) {
 }
 
 static void __eventRouter(Event *event) {
-    /* use event_list to async process */
-    EventListAdd(g_app.vui_event_list, event, EVENT_LIST_PRIORITY_MEDIUM);
+    /* use event_loop to async process */
+    EventLoopAdd(g_app.vui_event_loop, event, EVENT_LOOP_PRIORITY_MEDIUM);
 }
 
 int main() {
     LogLevelSet(N_LOG_TRACK);
 
-    g_app.vui_event_list = EventListCreate(__vui_event_handler, __vui_event_free_handler, 16 * 1024);
+    g_app.vui_event_loop = EventLoopCreate(__vui_event_handler, __vui_event_free_handler, 16 * 1024);
 
     g_app.vui_hndl = VuiCreate(__eventRouter);
 
