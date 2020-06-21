@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (C) 2017-2017  junlon2006
+ * Copyright (C) 2020-2020  junlon2006
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,34 +16,34 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  **********************************************************************
  *
- * Description : event_list.h
+ * Description : event_loop.h
  * Author      : junlon2006@163.com
- * Date        : 2017.9.19
+ * Date        : 2020.06.21
  *
  **********************************************************************/
-#ifndef VOICE_SDK_UTILS_EVENT_LIST_INC_EVENT_LIST_H_
-#define VOICE_SDK_UTILS_EVENT_LIST_INC_EVENT_LIST_H_
+#ifndef VOICE_SDK_UTILS_EVENT_LOOP_INC_EVENT_LOOP_H_
+#define VOICE_SDK_UTILS_EVENT_LOOP_INC_EVENT_LOOP_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define EVENT_LIST_PRIORITY_HIGHEST  (1 << 0)
-#define EVENT_LIST_PRIORITY_MEDIUM   (1 << 1)
-#define EVENT_LIST_PRIORITY_LOWEST   (1 << 2)
+#define EVENT_LOOP_PRIORITY_HIGHEST  (1 << 0)
+#define EVENT_LOOP_PRIORITY_MEDIUM   (1 << 1)
+#define EVENT_LOOP_PRIORITY_LOWEST   (1 << 2)
 
-typedef void* EventListHandle;
-typedef void (*EventListEventHandler)(void *event);
-typedef void (*EventListEventFreeHandler)(void *event);
+typedef void* EventLoopHandle;
+typedef void (*EventLoopEventHandler)(void *event);
+typedef void (*EventLoopEventFreeHandler)(void *event);
 
-EventListHandle EventListCreate(EventListEventHandler event_handler,
-                                EventListEventFreeHandler free_handler,
+EventLoopHandle EventLoopCreate(EventLoopEventHandler event_handler,
+                                EventLoopEventFreeHandler free_handler,
                                 unsigned int stack_size);
-int             EventListDestroy(EventListHandle handle);
-int             EventListAdd(EventListHandle handle, void *event, int priority);
-int             EventListClear(EventListHandle handle);
+int             EventLoopDestroy(EventLoopHandle handle);
+int             EventLoopAdd(EventLoopHandle handle, void *event, int priority);
+int             EventLoopClear(EventLoopHandle handle);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-#endif /* VOICE_SDK_UTILS_EVENT_LIST_INC_EVENT_LIST_H_ */
+#endif /* VOICE_SDK_UTILS_EVENT_LOOP_INC_EVENT_LOOP_H_ */
