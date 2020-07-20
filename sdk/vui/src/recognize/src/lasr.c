@@ -104,6 +104,7 @@ static void __lasr_result_event_free_handler(Event *event) {
 
 #define MOCK_LASR_RESULT  "alexa"
 static void __do_lasr(Lasr *lasr, char *buf, int len) {
+    //TODO LASR
     static int frame = 0;
     if (frame++ % 120 == 0) {
         LOGT(TAG, "do lasr[%d]", frame);
