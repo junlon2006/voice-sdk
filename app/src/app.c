@@ -55,7 +55,7 @@ static void __vui_event_free_handler(void *event) {
     }
 }
 
-static void __eventRouter(Event *event) {
+static void __event_router(Event *event) {
     /* use event_loop to async process */
     EventLoopAdd(g_app.vui_event_loop, event, EVENT_LOOP_PRIORITY_MEDIUM);
 }
@@ -65,7 +65,7 @@ int main() {
 
     g_app.vui_event_loop = EventLoopCreate(__vui_event_handler, __vui_event_free_handler, 16 * 1024);
 
-    g_app.vui_hndl = VuiCreate(__eventRouter);
+    g_app.vui_hndl = VuiCreate(__event_router);
 
     VuiStart(g_app.vui_hndl, UNI_LASR_RASR_MODE);
 
